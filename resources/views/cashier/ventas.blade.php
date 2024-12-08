@@ -12,7 +12,7 @@
         <div class="custom-search-bar">
             <input type="text" placeholder="Código de producto o nombre de producto">
             <button>Agregar producto</button>
-            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">Buscar</button>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Buscar</button>
             <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Generar Corte</button>
         </div>
         <div class="custom-payment-buttons">
