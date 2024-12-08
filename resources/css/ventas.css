@@ -1,0 +1,168 @@
+.custom-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .custom-search-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  
+  .custom-search-bar input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    max-width: 600px;
+  }
+  
+  .custom-search-bar button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #0067B8;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .custom-payment-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .custom-payment-buttons button {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .custom-payment-buttons .custom-cash {
+    background-color: #0CC121;
+    gap: 8px;
+  }
+  
+  .custom-payment-buttons .custom-card {
+    background-color: #0067B8;
+    gap: 8px;
+  }
+  
+  .custom-payment-buttons i {
+    margin-right: 10px;
+  }
+  
+  /* Tabla */
+  .tabla {
+    padding-top: 0;
+  }
+  
+  .total{
+    display: flex;
+    justify-content: end;
+    padding-bottom: 10px;
+  }
+  
+  .total{
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    background-color: #f8f8f2;
+    border-radius: 12px; /* Redondear toda la tabla */
+    overflow: hidden; 
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: center; /* Centrar el texto */
+  }
+  
+  th {
+    background-color: #6D7AE0;
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f0f0ff;
+  }
+  
+  tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .actions button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .actions .fa-minus-circle,
+  .actions .fa-plus-circle,
+  .actions .fa-trash {
+    font-size: 18px; /* Aumentar el tamaño de los íconos */
+  }
+  
+  .actions .fa-minus-circle {
+    color: #ff5555;
+  }
+  
+  .actions .fa-plus-circle {
+    color: #50fa7b;
+  }
+  
+  .actions .fa-trash {
+    color: #ff5555;
+  }
+  
+  .search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #000;
+    border-radius: 25px;
+    padding: 10px;
+    width: 80%;
+    max-width: 600px;
+    background-color: #fff;
+  }
+  
+  .search-box input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    padding-left: 10px;
+    font-size: 16px;
+  }
+  
+  .search-box i {
+    font-size: 20px;
+    color: #000;
+    margin-left: 10px;
+  }  
