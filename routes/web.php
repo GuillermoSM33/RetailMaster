@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,34 +19,39 @@ Route::get('/', function () {
     return view('auth/login');
 });
 
-Route::get('/inicio', function () {
-    return view('home');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/inicio', function () {
+        return view('home');
+    })->name('inicio');
+
+    Route::get('/ventas', function () {
+        return view('cashier/ventas');
+    })->name('ventas');
+
+    Route::get('/inventario', function () {
+        return view('admin/inventory');
+    })->name('inventario');
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->middleware('verified')->name('dashboard');
+
+    // Perfil de usuario
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
+
+    // Gestión de usuarios
+    Route::prefix('usuarios')->name('usuarios.')->middleware(['permission:ver'])->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->middleware('permission:editar')->name('edit');
+        Route::match(['PUT', 'PATCH'], '/{user}', [UserController::class, 'update'])->middleware('permission:editar')->name('update'); // Acepta PUT y PATCH
+        Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('permission:eliminar')->name('destroy');
+    });
+    
 });
 
-Route::get('/ventas', function () {
-    return view('cashier/ventas');
-})->name('ventas');
-
-/* Route::get('/usuarios', function () {
-    return view('admin/users');
-})->name('usuarios'); */
-
-Route::middleware(['permission:ver'])->group(function () {
-    Route::get('/usuarios', [UserController::class, 'index'])->name('admin.users');
-});
-
-Route::get('/inventario', function () {
-    return view('admin/inventory');
-})->name('inventario');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
+// Importa las rutas de autenticación
 require __DIR__.'/auth.php';

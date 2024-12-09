@@ -55,35 +55,4 @@ document.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('delete-product'); // Asegúrate de que este ID sea correcto
             modal.classList.add('hidden'); // Ocultar el modal
         });
-
-            // Abrir el modal de editar usuario
-    document.querySelectorAll('[data-modal-toggle="edit-user-modal"]').forEach(button => {
-        button.addEventListener('click', () => {
-            const modal = document.getElementById('edit-user-modal'); // Selecciona el modal por ID
-            if (modal) {
-                modal.classList.remove('hidden'); // Muestra el modal
-            }
-        });
-    });
-
-    // Cerrar el modal al hacer clic fuera de él
-    const editUserModal = document.getElementById('edit-user-modal');
-    if (editUserModal) {
-        editUserModal.addEventListener('click', function (e) {
-            if (e.target === this) {
-                this.classList.add('hidden'); // Oculta el modal
-            }
-        });
-    }
-
-    // Cerrar el modal al hacer clic en el botón "Cancelar"
-    const cancelButton = document.getElementById('cancel-button');
-    if (cancelButton) {
-        cancelButton.addEventListener('click', () => {
-            const modal = document.getElementById('edit-user-modal'); // Selecciona el modal por ID
-            if (modal) {
-                modal.classList.add('hidden'); // Oculta el modal
-            }
-        });
-    }
 });
