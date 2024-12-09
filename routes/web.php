@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('login');
+    return view('auth/login');
 });
 
 Route::get('/inicio', function () {
@@ -24,7 +24,7 @@ Route::get('/inicio', function () {
 
 Route::get('/ventas', function () {
     return view('cashier/ventas');
-});
+})->name('ventas');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
