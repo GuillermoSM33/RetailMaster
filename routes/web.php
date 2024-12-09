@@ -24,7 +24,7 @@ Route::get('/inicio', function () {
 
 Route::get('/ventas', function () {
     return view('cashier/ventas');
-});
+})->name('ventas');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
