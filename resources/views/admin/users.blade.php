@@ -27,10 +27,15 @@
                 </tr>
             </thead>
             <tbody>
+            @foreach($users as $user)
                 <tr>
-                    <td>645353</td>
-                    <td>Pantalón Jeans</td>
-                    <td>3</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>                        
+                        @foreach($user->roles as $role)
+                            {{ $role->name }}
+                        @endforeach
+                    </td>
                     <td class="actions">
                         
                         <button>
@@ -49,6 +54,7 @@
                     </td>
                 </tr>
             </tbody>
+            @endforeach
         </table>
     </div>
 @endsection

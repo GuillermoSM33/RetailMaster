@@ -14,7 +14,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear el usuario Administrador
+
+        $permissions = Permission::pluck('name')->toArray();
+
         $adminUser = User::firstOrCreate(
             ['email' => 'admin@example.com'], 
             [
@@ -24,6 +26,7 @@ class UserSeeder extends Seeder
         );
 
         $adminRole = Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
+        $adminRole->syncPermissions($permissions);
         $adminUser->assignRole($adminRole);
 
         $cashierUser = User::firstOrCreate(
