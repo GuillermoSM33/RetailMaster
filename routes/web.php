@@ -30,6 +30,10 @@ Route::get('/usuarios', function () {
     return view('admin/users');
 })->name('usuarios');
 
+Route::get('/inventario', function () {
+    return view('admin/inventory');
+})->name('inventario');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
