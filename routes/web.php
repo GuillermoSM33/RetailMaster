@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('login');
+    return view('auth/login');
 });
 
 Route::get('/inicio', function () {
@@ -24,7 +25,19 @@ Route::get('/inicio', function () {
 
 Route::get('/ventas', function () {
     return view('cashier/ventas');
+})->name('ventas');
+
+/* Route::get('/usuarios', function () {
+    return view('admin/users');
+})->name('usuarios'); */
+
+Route::middleware(['permission:ver'])->group(function () {
+    Route::get('/usuarios', [UserController::class, 'index'])->name('admin.users');
 });
+
+Route::get('/inventario', function () {
+    return view('admin/inventory');
+})->name('inventario');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
