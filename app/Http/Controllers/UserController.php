@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\User; // Importar el modelo User
 use Illuminate\Http\Request;
-use App\Models\Role; // Importar el modelo Role
+use Spatie\Permission\Models\Role; // Usar el modelo Role de Spatie
+use Spatie\Permission\Models\Permission; // Usar el modelo Permission de Spatie
 
 class UserController extends Controller
 {
     public function __construct()
     {
-        // Definir los permisos necesarios para cada acción
-        $this->middleware('permission:ver usuarios')->only('index');
-        $this->middleware('permission:crear usuarios')->only(['create', 'store']);
-        $this->middleware('permission:editar usuarios')->only(['edit', 'update']);
-        $this->middleware('permission:eliminar usuarios')->only('destroy');
+        $this->middleware('permission:ver')->only('index');
+        $this->middleware('permission:crear')->only(['create', 'store']);
+        $this->middleware('permission:editar')->only(['edit', 'update']);
+        $this->middleware('permission:eliminar')->only('destroy');
     }
 
     /**
@@ -24,9 +24,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Obtener todos los usuarios con sus roles, paginados
         $users = User::with('roles')->paginate(10);
-        return view('users.index', compact('users'));
+        return view('admin.users', compact('users'));
     }
 
     /**
@@ -36,7 +35,6 @@ class UserController extends Controller
      */
     public function create()
     {
-        // Obtener roles disponibles
         $roles = Role::all();
         return view('users.create', compact('roles'));
     }
@@ -49,23 +47,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar la solicitud
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required|array|exists:roles,name'
+            'roles' => 'required|array',
         ]);
 
-        // Crear el usuario
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
 
-        // Asignar roles al usuario
-        $user->syncRoles($request->roles);
+        $roles = Role::whereIn('name', $request->roles)->get();
+        $user->syncRoles($roles);
 
         return redirect()->route('users.index')->with('success', 'Usuario creado con éxito');
     }
@@ -78,7 +74,6 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        // Obtener todos los roles disponibles
         $roles = Role::all();
         return view('users.edit', compact('user', 'roles'));
     }
@@ -92,21 +87,19 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // Validar la solicitud
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'roles' => 'required|array|exists:roles,name',
+            'roles' => 'required|array',
         ]);
 
-        // Actualizar los datos del usuario
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
         ]);
 
-        // Actualizar los roles del usuario
-        $user->syncRoles($request->roles);
+        $roles = Role::whereIn('name', $request->roles)->get();
+        $user->syncRoles($roles);
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado con éxito');
     }
@@ -119,8 +112,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Eliminar el usuario
+        $user->syncRoles([]);
         $user->delete();
+
         return redirect()->route('users.index')->with('success', 'Usuario eliminado con éxito');
     }
 }
