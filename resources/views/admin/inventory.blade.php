@@ -3,17 +3,20 @@
 @section('title', 'Inventario')
 
 @section('estilos')
-    @vite(['resources/css/ventas.css'])
+    @vite(['resources/css/ventas.css', 'resources/js/modal.js'])
 @endsection
 
 @section('contenido')
 <div class="custom-container">
         <h1>Inventario</h1>
         <div class="custom-search-bar">
-            <button>Agregar Producto</button>
+            <button data-modal-toggle="crud-modal" type="button">Agregar Producto</button>
         </div>
 
     </div>
+
+    <!-- Incluir el componente modal -->
+    @include('admin.modals.addProduct')  <!-- Esto incluye el contenido del modal -->
 
     <!--TABLA-->
     <div class="tabla">
