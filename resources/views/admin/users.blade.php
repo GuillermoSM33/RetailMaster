@@ -9,9 +9,12 @@
 @section('contenido')
 <div class="custom-container">
         <h1>Usuarios</h1>
+        <a href="{{ route('register') }}">
         <div class="custom-search-bar">
             <button>Agregar Usuario</button>
         </div>
+        </a>
+
 
     </div>
 

@@ -15,7 +15,7 @@ class ProductosSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('productos')->insert([
+        $productos = [
             ['id_producto' => 1, 'descripcion' => 'Camiseta de algodón (M)', 'precio_costo' => 5.00, 'precio_venta' => 12.00, 'stock' => 50],
             ['id_producto' => 3, 'descripcion' => 'Chaqueta de cuero (M)', 'precio_costo' => 40.00, 'precio_venta' => 75.00, 'stock' => 20],
             ['id_producto' => 4, 'descripcion' => 'Zapatillas deportivas Nike Air Max (42)', 'precio_costo' => 45.00, 'precio_venta' => 80.00, 'stock' => 15],
@@ -25,6 +25,18 @@ class ProductosSeeder extends Seeder
             ['id_producto' => 8, 'descripcion' => 'Vestido de verano Zara (S)', 'precio_costo' => 15.00, 'precio_venta' => 30.00, 'stock' => 10],
             ['id_producto' => 9, 'descripcion' => 'Reloj Tommy Hilfiger', 'precio_costo' => 50.00, 'precio_venta' => 90.00, 'stock' => 12],
             ['id_producto' => 10, 'descripcion' => 'Sombrero de paja (Tamaño único)', 'precio_costo' => 10.00, 'precio_venta' => 25.00, 'stock' => 50],
-        ]);
+        ];
+
+        foreach ($productos as $producto) {
+            DB::table('productos')->updateOrInsert(
+                ['id_producto' => $producto['id_producto']], // Condición para verificar si el registro ya existe
+                [
+                    'descripcion' => $producto['descripcion'],
+                    'precio_costo' => $producto['precio_costo'],
+                    'precio_venta' => $producto['precio_venta'],
+                    'stock' => $producto['stock'],
+                ] // Datos a actualizar o insertar
+            );
+        }
     }
 }
