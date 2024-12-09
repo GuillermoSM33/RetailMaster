@@ -26,6 +26,10 @@ Route::get('/ventas', function () {
     return view('cashier/ventas');
 })->name('ventas');
 
+Route::get('/usuarios', function () {
+    return view('admin/users');
+})->name('usuarios');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
