@@ -12,7 +12,7 @@ class Venta extends Model
     protected $table = 'ventas'; // Nombre de la tabla
     protected $primaryKey = 'id_venta'; // Llave primaria
 
-    public $timestamps = false; // Si no usas created_at/updated_at
+    public $timestamps = true; 
 
     protected $fillable = [
         'total',
