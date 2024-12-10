@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\inventoryController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,5 +60,4 @@ Route::middleware(['auth'])->group(function () {
     
 });
 
-// Importa las rutas de autenticación
-require _DIR_.'/auth.php';
+require __DIR__.'/auth.php';
