@@ -104,7 +104,7 @@ document.getElementById('search').addEventListener('input', function () {
         .catch(error => console.error('Error al buscar productos:', error));
 });
 
-function agregarProductoATabla(id, descripcion, precio) {
+/* function agregarProductoATabla(id, descripcion, precio) {
     const cantidad = 1; // Por defecto, siempre intentamos agregar 1
 
     // Verificar stock antes de agregar
@@ -170,9 +170,9 @@ function agregarProductoATabla(id, descripcion, precio) {
     })
     .catch(error => {
         console.error('Error al verificar stock:', error);
-        alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+        alert('!UPSS!, Parece que el stock del inventario es insuficiente.');
     });
-}
+} */
 
 function agregarProductoATabla(id, descripcion, precio) {
     const cantidad = 1; // Por defecto, siempre intentamos agregar 1
@@ -209,7 +209,7 @@ function agregarProductoATabla(id, descripcion, precio) {
                 })
                 .catch(error => {
                     console.error('Error al verificar stock dinámico:', error);
-                    alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+                    alert('!UPSS!, Parece que el stock del inventario es insuficiente.');
                 });
             } else {
                 // Crear nueva fila si no existe
@@ -220,7 +220,7 @@ function agregarProductoATabla(id, descripcion, precio) {
                     <td class="cantidad">${cantidad}</td>
                     <td class="precio">$${precio.toFixed(2)}</td>
                     <td>
-                    
+
                         <button class="bajar-producto">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
                                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
@@ -267,8 +267,8 @@ function agregarProductoATabla(id, descripcion, precio) {
         }
     })
     .catch(error => {
-        console.error('Error al verificar stock:', error);
-        alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+        console.error('!UPSS!, Parece que el stock del inventario es insuficiente.', error);
+        alert('!UPSS!, Parece que el stock del inventario es insuficiente.');
     });
 }
 
@@ -290,24 +290,53 @@ function modificarCantidad(id, cambio, precio, fila) {
     .then(response => {
         if (response.data.success) {
             cantidadElem.textContent = nuevaCantidad;
-            total += cambio * precio;
-            actualizarTotal();
+            recalcularTotal();
         } else {
             alert(response.data.message);
         }
     })
     .catch(error => {
         console.error('Error al modificar cantidad:', error);
-        alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+        alert('!UPSS!, Parece que el stock del inventario es insuficiente.');
     });
 }
 
 function eliminarProducto(fila, precio) {
-    const cantidad = parseInt(fila.querySelector('.cantidad').textContent);
-    total -= cantidad * precio;
     fila.remove();
+    recalcularTotal();
+}
+
+function recalcularTotal() {
+    const tabla = document.querySelector('table tbody');
+    total = 0;
+
+    [...tabla.children].forEach(row => {
+        const cantidad = parseInt(row.querySelector('.cantidad').textContent);
+        const precio = parseFloat(row.querySelector('.precio').textContent.replace('$', ''));
+        total += cantidad * precio;
+    });
+
     actualizarTotal();
 }
+
+function actualizarTotal() {
+    document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
+}
+
+
+function eliminarProducto(fila, precio) {
+    const cantidad = parseInt(fila.querySelector('.cantidad').textContent);
+    total -= precio * cantidad;
+    fila.remove();
+
+    const tabla = document.querySelector('table tbody');
+    if (tabla.children.length === 0) {
+        total = 0; 
+    }
+
+    actualizarTotal();
+}
+
 
 function actualizarTotal() {
     document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
@@ -317,24 +346,53 @@ function actualizarTotal() {
 function actualizarCantidad(fila, cambio, precio) {
     const cantidadElem = fila.querySelector('.cantidad');
     let cantidad = parseInt(cantidadElem.textContent);
-    const cantidadAnterior = cantidad;
 
-    cantidad += cambio;
-    if (cantidad <= 0) {
+    // Calcular la nueva cantidad
+    const nuevaCantidad = cantidad + cambio;
+
+    if (nuevaCantidad <= 0) {
+        // Si la cantidad llega a 0 o menos, eliminar el producto
         eliminarProducto(fila, precio);
     } else {
-        cantidadElem.textContent = cantidad;
-        total += cambio * precio;
-        actualizarTotal();
+        // Verificar stock dinámico
+        const productoId = fila.children[0].textContent; // Suponiendo que el ID está en la primera celda
+        axios.post('{{ route('ventas.verificarStock') }}', {
+            producto_id: productoId,
+            cantidad: nuevaCantidad,
+        })
+        .then(response => {
+            if (response.data.success) {
+                // Actualizar cantidad y total si hay suficiente stock
+                cantidadElem.textContent = nuevaCantidad;
+                total += cambio * precio;
+                actualizarTotal();
+            } else {
+                // Mostrar alerta si no hay suficiente stock
+                alert(response.data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error al verificar stock:', error);
+            alert('!UPSS!, Parece que el stock del inventario es insuficiente.');
+        });
     }
 }
+
 
 function eliminarProducto(fila, precio) {
     const cantidad = parseInt(fila.querySelector('.cantidad').textContent);
     total -= precio * cantidad;
     fila.remove();
+
+    // Verificar si la tabla está vacía
+    const tabla = document.querySelector('table tbody');
+    if (tabla.children.length === 0) {
+        total = 0; // Reiniciar el total
+    }
+
     actualizarTotal();
 }
+
 
 function actualizarTotal() {
     document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;

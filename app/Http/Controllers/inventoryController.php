@@ -38,19 +38,27 @@ class inventoryController extends Controller
      */
     public function store(Request $request)
     {
-         // Validar los datos del formulario
-         $validated = $request->validate([
+        // Verificar los datos recibidos
+        \Log::info($request->all());
+
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
             'descripcion' => 'required|string|max:255',
-            'precio_costo' => 'required|numeric|min:0',
-            'precio_venta' => 'required|numeric|min:0',
+            'precio_costo' => 'required|numeric',
+            'precio_venta' => 'required|numeric',
             'stock' => 'required|integer|min:0',
         ]);
 
-        // Crear el producto
-        Producto::create($validated);
+        // Crear el nuevo producto
+        Producto::create([
+            'descripcion' => $validatedData['descripcion'],
+            'precio_costo' => $validatedData['precio_costo'],
+            'precio_venta' => $validatedData['precio_venta'],
+            'stock' => $validatedData['stock'],
+        ]);
 
         // Redirigir con un mensaje de éxito
-        return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
+        return redirect()->route('productos.index')->with('success', 'Producto creado con éxito.');
     }
 
     /**
@@ -70,9 +78,13 @@ class inventoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id_producto)
     {
-        //
+        // Obtener el producto por su ID
+        $producto = Producto::findOrFail($id_producto);
+
+        // Retornar la vista con el producto a editar
+        return view('admin.modals.editProduct', compact('producto'));
     }
 
     /**
@@ -82,9 +94,29 @@ class inventoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_producto)
     {
-        //
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
+            'descripcion' => 'required|string|max:255',
+            'precio_costo' => 'required|numeric',
+            'precio_venta' => 'required|numeric',
+            'stock' => 'required|integer|min:0',
+        ]);
+
+        // Encontrar el producto por ID
+        $producto = Producto::findOrFail($id_producto);
+
+        // Actualizar el producto con los nuevos datos
+        $producto->update([
+            'descripcion' => $validatedData['descripcion'],
+            'precio_costo' => $validatedData['precio_costo'],
+            'precio_venta' => $validatedData['precio_venta'],
+            'stock' => $validatedData['stock'],
+        ]);
+
+        // Redirigir con un mensaje de éxito
+        return redirect()->route('productos.index')->with('success', 'Producto actualizado con éxito.');
     }
 
     /**
@@ -93,8 +125,15 @@ class inventoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id_producto)
     {
-        
+        // Encontrar el producto por id
+        $producto = Producto::findOrFail($id_producto);
+
+        // Eliminar el producto
+        $producto->delete();
+
+        // Redirigir de vuelta con un mensaje de éxito
+        return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
     }
 }

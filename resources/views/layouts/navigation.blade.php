@@ -3,9 +3,10 @@
     <div class="flex justify-between items-center w-full h-16">
         <!-- Logo -->
         <div class="flex items-center">
-            <a href="{{ route('dashboard') }}">
-                <img class="logo" alt="Retail Master Logo" src="{{ asset('images/LOGORETAIL.png') }}">
-            </a>
+        <a href="{{ auth()->user()->hasRole('Administrador') ? route('usuarios.index') : route('ventas') }}">
+    <img class="logo" alt="Retail Master Logo" src="{{ asset('images/LOGORETAIL.png') }}">
+</a>
+
         </div>
 
         <!-- Navigation Links -->
