@@ -20,7 +20,6 @@
             <h1>Ticket de Venta</h1>
         </div>
         <div class="details">
-            <p><strong>Fecha:</strong> {{ $venta->fecha_venta }}</p>
             <p><strong>Método de Pago:</strong> {{ $venta->metodo_pago }}</p>
             <p><strong>Total:</strong> ${{ number_format($venta->total, 2) }}</p>
             <p><strong>Monto Recibido:</strong> ${{ number_format($venta->monto_recibido, 2) }}</p>
