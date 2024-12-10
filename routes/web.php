@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\inventoryController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +38,9 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->middleware('verified')->name('dashboard');
 
+    Route::get('/inventario', [inventoryController::class, 'index']);
+    Route::post('/inventario', [inventoryController::class, 'store'])->name('productos.store');
+
     // Perfil de usuario
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
@@ -55,5 +60,4 @@ Route::middleware(['auth'])->group(function () {
     
 });
 
-// Importa las rutas de autenticación
 require __DIR__.'/auth.php';
