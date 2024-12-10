@@ -38,19 +38,21 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|string|exists:roles,name',
         ]);
-
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
+    
         $user->assignRole($request->role);
-
+    
+        // Elimina la línea que inicia sesión automáticamente
+        // Auth::login($user); 
+    
         event(new Registered($user));
-
-        Auth::login($user);
-
+    
         return redirect()->route('admin.users')->with('success', 'Usuario registrado y rol asignado con éxito.');
     }
+    
 }
