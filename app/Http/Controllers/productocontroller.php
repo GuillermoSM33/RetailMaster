@@ -13,7 +13,7 @@ class ProductoController extends Controller
         // Busca productos que coincidan con la descripción o nombre
         $productos = Producto::where('descripcion', 'LIKE', "%{$query}%")
             ->orWhere('id_producto', 'LIKE', "%{$query}%")
-            ->get('descripcion','id_producto');
+            ->get(['descripcion','id_producto','precio_venta']);
 
         return response()->json($productos);
     }
