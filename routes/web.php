@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
     })->middleware('verified')->name('dashboard');
 
     Route::get('/inventario', [inventoryController::class, 'index']);
-    Route::post('/inventario', [inventoryController::class, 'store'])->name('productos.store');
+    Route::post('/productos', [inventoryController::class, 'store'])->middleware('permission:crear')->name('productos.store');
 
     // Perfil de usuario
     Route::prefix('profile')->name('profile.')->group(function () {
