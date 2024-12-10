@@ -11,6 +11,8 @@ class Producto extends Model
 
     protected $table = 'productos';
 
+    protected $primaryKey = 'id_producto';
+
     // Especifica los campos que son asignables en masa
     protected $fillable = [
         'id_producto',
@@ -19,4 +21,8 @@ class Producto extends Model
         'precio_venta',
         'stock'      
     ];
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
 }

@@ -105,55 +105,226 @@ document.getElementById('search').addEventListener('input', function () {
 });
 
 function agregarProductoATabla(id, descripcion, precio) {
-    const tabla = document.querySelector('table tbody');
-    const fila = document.createElement('tr');
+    const cantidad = 1; // Por defecto, siempre intentamos agregar 1
 
-    fila.innerHTML = `
+    // Verificar stock antes de agregar
+    axios.post('{{ route('ventas.verificarStock') }}', {
+        producto_id: id,
+        cantidad: cantidad,
+    })
+    .then(response => {
+        if (response.data.success) {
+            // Si hay suficiente stock, agregar al carrito
+            const tabla = document.querySelector('table tbody');
+            const fila = document.createElement('tr');
+
+            fila.innerHTML = `
                 <td>${id}</td>
-        <td>${descripcion}</td>
-        <td class="cantidad">1</td>
-        <td class="precio">$${precio.toFixed(2)}</td>
-        <td>
-            <button class="bajar-producto">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                <td>${descripcion}</td>
+                <td class="cantidad">${cantidad}</td>
+                <td class="precio">$${precio.toFixed(2)}</td>
+                <td>
+                    <button class="bajar-producto">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
                             <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
                         </svg>
-             </button>
+                    </button>
 
-            <button class="subir-producto">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="#50fa7b" viewBox="0 0 24 24" class="size-6">
-                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
-                </svg>
-            </button>
+                    <button class="subir-producto">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#50fa7b" viewBox="0 0 24 24" class="size-6">
+                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
 
-            <button class="eliminar-producto">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
-                    <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        </td>
-    `;
+                    <button class="eliminar-producto">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
+                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </td>
+            `;
 
+            // Agregar fila a la tabla
+            tabla.appendChild(fila);
 
-    tabla.appendChild(fila);
+            // Asociar eventos a los botones
+            fila.querySelector('.bajar-producto').addEventListener('click', () => {
+                actualizarCantidad(fila, -1, precio);
+            });
 
-    fila.querySelector('.bajar-producto').addEventListener('click', () => actualizarCantidad(fila, -1, precio));
-    fila.querySelector('.subir-producto').addEventListener('click', () => actualizarCantidad(fila, 1, precio));
-    fila.querySelector('.eliminar-producto').addEventListener('click', () => eliminarProducto(fila, precio));
+            fila.querySelector('.subir-producto').addEventListener('click', () => {
+                actualizarCantidad(fila, 1, precio);
+            });
 
-    total += precio;
+            fila.querySelector('.eliminar-producto').addEventListener('click', () => {
+                eliminarProducto(fila, precio);
+            });
+
+            // Actualizar el total
+            total += precio;
+            actualizarTotal();
+        } else {
+            // Mostrar alerta de stock insuficiente
+            alert(response.data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error al verificar stock:', error);
+        alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+    });
+}
+
+function agregarProductoATabla(id, descripcion, precio) {
+    const cantidad = 1; // Por defecto, siempre intentamos agregar 1
+
+    // Verificar stock antes de agregar
+    axios.post('{{ route('ventas.verificarStock') }}', {
+        producto_id: id,
+        cantidad: cantidad,
+    })
+    .then(response => {
+        if (response.data.success) {
+            const tabla = document.querySelector('table tbody');
+            let fila = [...tabla.children].find(row => row.children[0].textContent === id.toString());
+
+            if (fila) {
+                // Incrementar cantidad si la fila ya existe
+                const cantidadElem = fila.querySelector('.cantidad');
+                const cantidadActual = parseInt(cantidadElem.textContent);
+                const nuevaCantidad = cantidadActual + cantidad;
+
+                // Validar stock nuevamente antes de incrementar
+                axios.post('{{ route('ventas.verificarStock') }}', {
+                    producto_id: id,
+                    cantidad: nuevaCantidad,
+                })
+                .then(stockResponse => {
+                    if (stockResponse.data.success) {
+                        cantidadElem.textContent = nuevaCantidad;
+                        total += precio;
+                        actualizarTotal();
+                    } else {
+                        alert(stockResponse.data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al verificar stock dinámico:', error);
+                    alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+                });
+            } else {
+                // Crear nueva fila si no existe
+                fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${id}</td>
+                    <td>${descripcion}</td>
+                    <td class="cantidad">${cantidad}</td>
+                    <td class="precio">$${precio.toFixed(2)}</td>
+                    <td>
+                    
+                        <button class="bajar-producto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
+                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <button class="subir-producto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#50fa7b" viewBox="0 0 24 24" class="size-6">
+                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <button class="eliminar-producto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
+                                <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                    </td>
+                `;
+
+                // Agregar fila a la tabla
+                tabla.appendChild(fila);
+
+                // Asociar eventos a los botones
+                fila.querySelector('.bajar-producto').addEventListener('click', () => {
+                    modificarCantidad(id, -1, precio, fila);
+                });
+
+                fila.querySelector('.subir-producto').addEventListener('click', () => {
+                    modificarCantidad(id, 1, precio, fila);
+                });
+
+                fila.querySelector('.eliminar-producto').addEventListener('click', () => {
+                    eliminarProducto(fila, precio);
+                });
+
+                // Actualizar el total
+                total += precio;
+                actualizarTotal();
+            }
+        } else {
+            alert(response.data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error al verificar stock:', error);
+        alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+    });
+}
+
+function modificarCantidad(id, cambio, precio, fila) {
+    const cantidadElem = fila.querySelector('.cantidad');
+    const cantidadActual = parseInt(cantidadElem.textContent);
+    const nuevaCantidad = cantidadActual + cambio;
+
+    if (nuevaCantidad <= 0) {
+        eliminarProducto(fila, precio);
+        return;
+    }
+
+    // Validar stock dinámico antes de modificar la cantidad
+    axios.post('{{ route('ventas.verificarStock') }}', {
+        producto_id: id,
+        cantidad: nuevaCantidad,
+    })
+    .then(response => {
+        if (response.data.success) {
+            cantidadElem.textContent = nuevaCantidad;
+            total += cambio * precio;
+            actualizarTotal();
+        } else {
+            alert(response.data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error al modificar cantidad:', error);
+        alert('Error al verificar el stock. Por favor, inténtelo de nuevo.');
+    });
+}
+
+function eliminarProducto(fila, precio) {
+    const cantidad = parseInt(fila.querySelector('.cantidad').textContent);
+    total -= cantidad * precio;
+    fila.remove();
     actualizarTotal();
 }
+
+function actualizarTotal() {
+    document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
+}
+
 
 function actualizarCantidad(fila, cambio, precio) {
     const cantidadElem = fila.querySelector('.cantidad');
     let cantidad = parseInt(cantidadElem.textContent);
+    const cantidadAnterior = cantidad;
 
     cantidad += cambio;
     if (cantidad <= 0) {
         eliminarProducto(fila, precio);
     } else {
         cantidadElem.textContent = cantidad;
+        total += cambio * precio;
         actualizarTotal();
     }
 }
