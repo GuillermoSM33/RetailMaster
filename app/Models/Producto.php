@@ -10,6 +10,7 @@ class Producto extends Model
     use HasFactory;
 
     protected $table = 'productos';
+    protected $primaryKey = 'id_producto';
 
     // Especifica los campos que son asignables en masa
     protected $fillable = [

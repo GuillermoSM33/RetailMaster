@@ -93,8 +93,15 @@ class inventoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id_producto)
     {
-        
+        // Encontrar el producto por id
+        $producto = Producto::findOrFail($id_producto);
+
+        // Eliminar el producto
+        $producto->delete();
+
+        // Redirigir de vuelta con un mensaje de éxito
+        return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
     }
 }
