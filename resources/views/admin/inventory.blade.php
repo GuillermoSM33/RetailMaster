@@ -9,9 +9,11 @@
 @section('contenido')
 <div class="custom-container" x-data="{ openModal: null }">
     <h1>Inventario</h1>
+    @role('Administrador')
     <div class="custom-search-bar">
         <button @click="openModal = 'add-product'">Agregar Producto</button>
     </div>
+    @endrole
 
     <!-- Modal Agregar Producto-->
     <div 
@@ -53,7 +55,9 @@
                     <th>Precio costo</th>
                     <th>Precio venta</th>
                     <th>Stock</th>
+                    @role('Administrador')
                     <th>Acciones</th>
+                    @endrole
                 </tr>
             </thead>
             <tbody>
@@ -63,7 +67,10 @@
                     <td>{{ $producto->descripcion }}</td>
                     <td>{{ $producto->precio_costo }}</td>
                     <td>{{ $producto->precio_venta }}</td>
-                    <td>{{ $producto->stock }}</td>
+                    <td class="{{ $producto->stock <= 10 ? 'stock-bajo' : '' }}">
+                    {{ $producto->stock }}
+                    </td>
+                    @role('Administrador')
                     <td class="actions">
                     <button @click="openModal = 'edit-product'">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="#FAE339" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -77,6 +84,7 @@
                             </svg>
                         </button>
                     </td>
+                    @endrole
                 </tr>
                 @endforeach
             </tbody>
