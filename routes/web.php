@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\inventoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,22 +36,13 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->middleware('verified')->name('dashboard');
 
-    // Perfil de usuario
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
-        Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
-    });
-
-    // Gestión de usuarios
-    Route::prefix('usuarios')->name('usuarios.')->middleware(['permission:ver'])->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/{user}/edit', [UserController::class, 'edit'])->middleware('permission:editar')->name('edit');
-        Route::match(['PUT', 'PATCH'], '/{user}', [UserController::class, 'update'])->middleware('permission:editar')->name('update'); // Acepta PUT y PATCH
-        Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('permission:eliminar')->name('destroy');
-    });
-    
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Importa las rutas de autenticación
+Route::get('/inventario', [inventoryController::class, 'index']);
+Route::post('/inventario', [inventoryController::class, 'store'])->name('productos.store');
+
 require __DIR__.'/auth.php';
