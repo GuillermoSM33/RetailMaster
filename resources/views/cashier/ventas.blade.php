@@ -94,109 +94,6 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Seleccionamos los elementos del DOM
-        const openModalBtn = document.getElementById('openModalBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const modal = document.getElementById('myModal');
-        const generarTicketBtn = document.querySelector('.w-full.py-3'); // Botón para generar ticket
-        const montoRecibidoInput = document.querySelector('input[placeholder="DIGITE EL MONTO RECIBIDO"]');
-        const metodoPagoInputs = document.querySelectorAll('input[name="recibo"]');
-
-        // Verificar existencia de totalLabel
-        const totalLabel = document.querySelector('.total span');
-        if (!totalLabel) {
-            console.error('No se encontró el elemento totalLabel.');
-            return;
-        }
-
-        let total = parseFloat(totalLabel.textContent.replace('Total: $', '').replace(' MX', '')) || 0;
-
-        // Función para abrir el modal
-        openModalBtn.addEventListener('click', () => {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        });
-
-        // Función para cerrar el modal
-        closeModalBtn.addEventListener('click', () => {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        });
-
-        // Cerrar el modal al hacer clic fuera de él
-        window.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-            }
-        });
-
-        // Cerrar el modal al presionar la tecla Escape
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-            }
-        });
-
-        generarTicketBtn.addEventListener('click', () => {
-    const montoRecibido = parseFloat(montoRecibidoInput.value);
-
-    if (isNaN(montoRecibido) || montoRecibido < total) {
-        alert('Por favor, ingrese un monto válido que cubra el total.');
-        return;
-    }
-
-    const metodoPago = [...metodoPagoInputs].find(input => input.checked)?.id === 'impreso' ? 'Efectivo' : 'Tarjeta';
-
-    // Obtener productos de la tabla
-    const productos = [...document.querySelectorAll('table tbody tr')].map(row => {
-        const id = row.children[0]?.textContent || '';
-        const cantidad = row.querySelector('.cantidad')?.textContent || 0;
-
-        if (!id || !cantidad) {
-            console.error('Fila incompleta en la tabla de productos.');
-            return null;
-        }
-
-        return {
-            id,
-            cantidad: parseInt(cantidad),
-        };
-    }).filter(item => item !== null);
-
-    // Enviar datos al backend
-    axios.post('{{ route('ventas.guardar') }}', {
-        productos,
-        monto_recibido: montoRecibido,
-        metodo_pago: metodoPago,
-    }, { responseType: 'blob' }) // Importante: responseType para manejar PDFs
-    .then(response => {
-        // Crear un enlace para descargar el PDF
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'ticket_venta.pdf');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Limpiar modal y formulario
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-        montoRecibidoInput.value = '';
-    })
-    .catch(error => {
-        console.error('Error al guardar la venta:', error);
-        alert('Hubo un error al guardar la venta. Intente nuevamente.');
-    });
-});
-    });
-</script>
-
-
 <!-- Tabla de ventas -->
 <div class="tabla">
     <div class="total">
@@ -485,5 +382,122 @@
     function actualizarTotal() {
         document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
     }
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Seleccionamos los elementos del DOM
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modal = document.getElementById('myModal');
+        const generarTicketBtn = document.querySelector('.w-full.py-3'); // Botón para generar ticket
+        const montoRecibidoInput = document.querySelector('input[placeholder="DIGITE EL MONTO RECIBIDO"]');
+        const metodoPagoInputs = document.querySelectorAll('input[name="recibo"]');
+
+        // Verificar existencia de totalLabel
+        const totalLabel = document.querySelector('.total span');
+        if (!totalLabel) {
+            console.error('No se encontró el elemento totalLabel.');
+            return;
+        }
+
+        let total = parseFloat(totalLabel.textContent.replace('Total: $', '').replace(' MX', '')) || 0;
+
+        // Función para abrir el modal
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+
+        // Función para cerrar el modal
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        });
+
+        // Cerrar el modal al hacer clic fuera de él
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
+
+        // Cerrar el modal al presionar la tecla Escape
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
+
+        generarTicketBtn.addEventListener('click', () => {
+    const montoRecibido = parseFloat(montoRecibidoInput.value);
+
+    if (isNaN(montoRecibido) || montoRecibido < total) {
+        alert('Por favor, ingrese un monto válido que cubra el total.');
+        return;
+    }
+
+    const metodoPago = [...metodoPagoInputs].find(input => input.checked)?.id === 'impreso' ? 'Efectivo' : 'Tarjeta';
+
+    // Obtener productos de la tabla
+    const productos = [...document.querySelectorAll('table tbody tr')].map(row => {
+        const id = row.children[0]?.textContent || '';
+        const cantidad = row.querySelector('.cantidad')?.textContent || 0;
+
+        if (!id || !cantidad) {
+            console.error('Fila incompleta en la tabla de productos.');
+            return null;
+        }
+
+        return {
+            id,
+            cantidad: parseInt(cantidad),
+        };
+    }).filter(item => item !== null);
+
+    // Enviar datos al backend
+    axios.post('{{ route('ventas.guardar') }}', {
+        productos,
+        monto_recibido: montoRecibido,
+        metodo_pago: metodoPago,
+    }, { responseType: 'blob' }) // Importante: responseType para manejar PDFs
+    .then(response => {
+        // Crear un enlace para descargar el PDF
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'ticket_venta.pdf');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Limpiar modal y formulario
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        montoRecibidoInput.value = '';
+
+        total = 0; // Reinicia la variable total
+        actualizarTotal();
+
+        const tableBody = document.querySelector('table tbody');
+        if (tableBody) {
+            tableBody.innerHTML = ''; // Elimina todas las filas
+        }
+
+                // Esperar un momento para asegurarse de que el PDF se descargó
+                setTimeout(() => {
+            // Recargar la página
+            window.location.reload();
+        }, 200); // Espera 2 segundos antes de recargar
+    })
+    .catch(error => {
+        console.error('Error al guardar la venta:', error);
+        alert('Hubo un error al guardar la venta. Intente nuevamente.');
+    });
+});
+    });
 </script>
 @endsection
