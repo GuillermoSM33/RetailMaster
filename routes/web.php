@@ -31,10 +31,6 @@ Route::middleware(['auth'])->group(function () {
         return view('cashier/ventas');
     })->name('ventas');
 
-    Route::get('/inventario', function () {
-        return view('admin/inventory');
-    })->name('inventario');
-
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->middleware('verified')->name('dashboard');
