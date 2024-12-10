@@ -12,7 +12,7 @@
         <div class="custom-search-bar">
             <input type="text" id="search" placeholder="Código de producto o nombre de producto">
             <div id="search-results" class="search-results"></div>
-            <button>Agregar producto</button>
+            <button id="add-product">Agregar producto</button>
             <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Generar Corte</button>
         </div>
         <div class="custom-payment-buttons">
@@ -35,6 +35,7 @@
             </button>
         </div>
     </div>
+    
 
     <!--TABLA-->
     <div class="tabla">
@@ -124,8 +125,9 @@ document.getElementById('search').addEventListener('input', function() {
         })
         .catch(error => {
             console.error('Error al buscar productos:', error);
-        });
+        });    
 });
+
 
 
 </script>
