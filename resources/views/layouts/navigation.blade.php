@@ -10,13 +10,16 @@
 
         <!-- Navigation Links -->
         <div class="nav-links">
-            <x-nav-link :href="route('ventas')" :active="request()->routeIs('ventas')">
-                Ventas
+
+            <x-nav-link 
+                :href="auth()->user()->hasRole('Administrador') ? route('usuarios.index') : route('ventas')" 
+                :active="auth()->user()->hasRole('Administrador') ? request()->routeIs('usuarios.index') : request()->routeIs('ventas')">
+                {{ auth()->user()->hasRole('Administrador') ? 'Usuarios' : 'Ventas' }}
             </x-nav-link>
-            <x-nav-link>
+            <x-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.index')">
                 Inventario
             </x-nav-link>
-            <x-nav-link>
+            <x-nav-link :href="route('users.pdf')" :active="request()->routeIs('users.pdf')">
                 Reporte
             </x-nav-link>
         
@@ -60,13 +63,16 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                Ventas
+           <x-responsive-nav-link 
+                :href="auth()->user()->hasRole('Administrador') ? route('usuarios.index') : route('ventas')" 
+                :active="auth()->user()->hasRole('Administrador') ? request()->routeIs('usuarios.index') : request()->routeIs('ventas')">
+                {{ auth()->user()->hasRole('Administrador') ? 'Usuarios' : 'Ventas' }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.index')">
                 Inventario
             </x-responsive-nav-link>
-            <x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('users.pdf')" :active="request()->routeIs('users.pdf')">
                 Reporte
             </x-responsive-nav-link>
         </div>
