@@ -15,7 +15,8 @@
         <input type="text" id="search" placeholder="Código de producto o nombre de producto">
         <div id="search-results" class="search-results"></div>
         <button id="add-product">Agregar producto</button>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Generar Corte</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Reporte de ventas Mensual</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Reporte de ventas Semanal</button>
     </div>
 
     <!-- Botones de pago -->
@@ -140,51 +141,58 @@
             }
         });
 
-        // Función para generar ticket y guardar venta
         generarTicketBtn.addEventListener('click', () => {
-            const montoRecibido = parseFloat(montoRecibidoInput.value);
+    const montoRecibido = parseFloat(montoRecibidoInput.value);
 
-            if (isNaN(montoRecibido) || montoRecibido < total) {
-                alert('Por favor, ingrese un monto válido que cubra el total.');
-                return;
-            }
+    if (isNaN(montoRecibido) || montoRecibido < total) {
+        alert('Por favor, ingrese un monto válido que cubra el total.');
+        return;
+    }
 
-            const metodoPago = [...metodoPagoInputs].find(input => input.checked)?.id === 'impreso' ? 'Efectivo' : 'Tarjeta';
+    const metodoPago = [...metodoPagoInputs].find(input => input.checked)?.id === 'impreso' ? 'Efectivo' : 'Tarjeta';
 
-            // Obtener productos de la tabla
-            const productos = [...document.querySelectorAll('table tbody tr')].map(row => {
-                const id = row.children[0]?.textContent || '';
-                const cantidad = row.querySelector('.cantidad')?.textContent || 0;
+    // Obtener productos de la tabla
+    const productos = [...document.querySelectorAll('table tbody tr')].map(row => {
+        const id = row.children[0]?.textContent || '';
+        const cantidad = row.querySelector('.cantidad')?.textContent || 0;
 
-                if (!id || !cantidad) {
-                    console.error('Fila incompleta en la tabla de productos.');
-                    return null;
-                }
+        if (!id || !cantidad) {
+            console.error('Fila incompleta en la tabla de productos.');
+            return null;
+        }
 
-                return {
-                    id,
-                    cantidad: parseInt(cantidad),
-                };
-            }).filter(item => item !== null);
+        return {
+            id,
+            cantidad: parseInt(cantidad),
+        };
+    }).filter(item => item !== null);
 
-            // Enviar datos al backend
-            axios.post('{{ route('ventas.guardar') }}', {
-                productos,
-                monto_recibido: montoRecibido,
-                metodo_pago: metodoPago,
-            }).then(response => {
-                // Abre el PDF generado en una nueva ventana
-                const pdfWindow = window.open();
-                pdfWindow.location.href = response.request.responseURL;
-                // Cerrar el modal y limpiar el formulario
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-                montoRecibidoInput.value = '';
-            }).catch(error => {
-                console.error('Error al guardar la venta:', error);
-                alert('Hubo un error al guardar la venta. Intente nuevamente.');
-            });
-        });
+    // Enviar datos al backend
+    axios.post('{{ route('ventas.guardar') }}', {
+        productos,
+        monto_recibido: montoRecibido,
+        metodo_pago: metodoPago,
+    }, { responseType: 'blob' }) // Importante: responseType para manejar PDFs
+    .then(response => {
+        // Crear un enlace para descargar el PDF
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'ticket_venta.pdf');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Limpiar modal y formulario
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        montoRecibidoInput.value = '';
+    })
+    .catch(error => {
+        console.error('Error al guardar la venta:', error);
+        alert('Hubo un error al guardar la venta. Intente nuevamente.');
+    });
+});
     });
 </script>
 

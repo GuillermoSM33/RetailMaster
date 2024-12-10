@@ -46,17 +46,6 @@ class VentaController extends Controller
             ], 500);
         }
     }
-
-    public function generarPDF($idVenta)
-    {
-        $venta = Venta::with('detalleVentas.producto')->findOrFail($idVenta);
-    
-        // Generar el PDF
-        $pdf = \PDF::loadView('pdf.venta', compact('venta'));
-    
-        // Devolver el PDF como respuesta
-        return $pdf->stream("venta_{$venta->id_venta}.pdf");
-    }
     
     public function guardarVenta(Request $request)
     {
@@ -99,7 +88,11 @@ class VentaController extends Controller
         }
     
         // Generar el PDF del ticket
-        return $this->generarPDF($venta->id_venta);
+        $pdf = \PDF::loadView('pdf.venta', compact('venta'));
+    
+        // Retornar el PDF
+        return $pdf->download("venta_{$venta->id_venta}.pdf");
     }
+    
     
 }
