@@ -28,7 +28,6 @@ class inventoryController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -39,24 +38,19 @@ class inventoryController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos del formulario
-        $validatedData = $request->validate([
+         // Validar los datos del formulario
+         $validated = $request->validate([
             'descripcion' => 'required|string|max:255',
-            'precio_costo' => 'required|numeric',
-            'precio_venta' => 'required|numeric',
-            'stock' => 'required|integer',
+            'precio_costo' => 'required|numeric|min:0',
+            'precio_venta' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
         ]);
 
-        // Crear un nuevo producto
-        $producto = new Producto();
-        $producto->descripcion = $validatedData['descripcion'];
-        $producto->precio_costo = $validatedData['precio_costo'];
-        $producto->precio_venta = $validatedData['precio_venta'];
-        $producto->stock = $validatedData['stock'];
-        $producto->save();
+        // Crear el producto
+        Producto::create($validated);
 
-        // Redirigir a la lista de productos con un mensaje de éxito
-        return redirect()->route('admin.inventory')->with('success', 'Producto creado exitosamente.');
+        // Redirigir con un mensaje de éxito
+        return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
     }
 
     /**

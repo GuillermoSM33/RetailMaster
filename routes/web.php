@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->middleware('verified')->name('dashboard');
 
-    Route::get('/inventario', [inventoryController::class, 'index']);
+    Route::get('/inventario', [inventoryController::class, 'index'])->name('productos.index');
     Route::post('/inventario', [inventoryController::class, 'store'])->name('productos.store');
 
     // Perfil de usuario
