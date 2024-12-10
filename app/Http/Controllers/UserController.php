@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Validator;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 
 class UserController extends Controller
 {
@@ -127,5 +130,31 @@ class UserController extends Controller
         }
 
         return Validator::make($request->all(), $rules);
+    }
+
+    public function generatePDF()
+    {
+        // Obtén todos los usuarios
+        $users = User::all();
+
+        // Genera el contenido HTML del PDF
+        $html = view('users.report', compact('users'))->render();
+
+        // Configura DOMPDF
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+
+        // Define el tamaño y la orientación del papel
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Renderiza el PDF
+        $dompdf->render();
+
+        // Envía el PDF al navegador para descarga
+        return $dompdf->stream('usuarios.pdf', ['Attachment' => false]);
     }
 }

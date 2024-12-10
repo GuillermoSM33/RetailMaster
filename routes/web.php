@@ -50,6 +50,8 @@ Route::middleware(['auth'])->group(function () {
         Route::match(['PUT', 'PATCH'], '/{user}', [UserController::class, 'update'])->middleware('permission:editar')->name('update'); // Acepta PUT y PATCH
         Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('permission:eliminar')->name('destroy');
     });
+
+    Route::get('/users/pdf', [UserController::class, 'generatePDF'])->name('users.pdf');
     
 });
 
