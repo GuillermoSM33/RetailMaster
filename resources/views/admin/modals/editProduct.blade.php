@@ -9,11 +9,11 @@
         </div>
         <div>
             <label for="precio_costo" class="block mb-2 text-sm font-medium text-gray-900">Precio costo</label>
-            <input type="number" name="precio_costo" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('precio_costo', $producto->precio_costo) }}" required>
+            <input type="number" step="0.01" name="precio_costo" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('precio_costo', $producto->precio_costo) }}" required>
         </div>
         <div>
             <label for="precio_venta" class="block mb-2 text-sm font-medium text-gray-900">Precio venta</label>
-            <input type="number" name="precio_venta" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('precio_venta', $producto->precio_venta) }}" required>
+            <input type="number" step="0.01" name="precio_venta" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" value="{{ old('precio_venta', $producto->precio_venta) }}" required>
         </div>
         <div>
             <label for="stock" class="block mb-2 text-sm font-medium text-gray-900">Stock</label>

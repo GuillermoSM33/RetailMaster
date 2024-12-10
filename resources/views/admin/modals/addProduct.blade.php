@@ -10,14 +10,14 @@
         </div>
         <div>
             <label for="precio_costo" class="block mb-2 text-sm font-medium text-gray-900">Precio costo</label>
-            <input type="number" name="precio_costo" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Precio de costo" required>
+            <input type="number" step="0.01" name="precio_costo" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Precio de costo" required>
             @error('precio_costo')
                 <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
         <div>
             <label for="precio_venta" class="block mb-2 text-sm font-medium text-gray-900">Precio venta</label>
-            <input type="number" name="precio_venta" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Precio de venta" required>
+            <input type="number" step="0.01" name="precio_venta" class="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Precio de venta" required>
             @error('precio_venta')
                 <div class="text-danger">{{ $message }}</div>
             @enderror
