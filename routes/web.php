@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\inventoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,5 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/inventario', [inventoryController::class, 'index']);
+Route::post('/inventario', [inventoryController::class, 'store'])->name('productos.store');
 
 require __DIR__.'/auth.php';
