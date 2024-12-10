@@ -15,9 +15,19 @@
         <input type="text" id="search" placeholder="Código de producto o nombre de producto">
         <div id="search-results" class="search-results"></div>
         <button id="add-product">Agregar producto</button>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Reporte de ventas Mensual</button>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Reporte de ventas Semanal</button>
+        <button type="button" onclick="descargarReporteMensual()">Reporte de ventas Mensual</button>
+        <button type="button" onclick="descargarReporteSemanal()">Reporte de ventas Semanal</button>
     </div>
+
+    <script>
+    function descargarReporteMensual() {
+        window.open('{{ route('ventas.reporteMensual') }}', '_blank');
+    }
+
+    function descargarReporteSemanal() {
+        window.open('{{ route('ventas.reporteSemanal') }}', '_blank');
+    }
+</script>
 
     <!-- Botones de pago -->
     <div class="custom-payment-buttons">

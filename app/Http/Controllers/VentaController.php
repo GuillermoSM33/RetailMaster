@@ -8,6 +8,7 @@ use App\Models\DetalleVenta;
 use App\Models\Producto; 
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Carbon\Carbon;
 
 class VentaController extends Controller
 {
@@ -94,5 +95,33 @@ class VentaController extends Controller
         return $pdf->download("venta_{$venta->id_venta}.pdf");
     }
     
-    
+    public function generarReporteMensual()
+    {
+        // Obtener las ventas del mes actual
+        $ventas = Venta::whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->with('detalleVentas.producto')
+            ->get();
+
+        // Generar el PDF
+        $pdf = \PDF::loadView('pdf.reporte_ventas', compact('ventas'));
+
+        // Retornar el PDF como descarga
+        return $pdf->download('reporte_ventas_mensual.pdf');
+    }
+
+    public function generarReporteSemanal()
+    {
+        // Obtener las ventas de los últimos 7 días
+        $ventas = Venta::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->with('detalleVentas.producto')
+            ->get();
+
+        // Generar el PDF
+        $pdf = \PDF::loadView('pdf.reporte_ventas', compact('ventas'));
+
+        // Retornar el PDF como descarga
+        return $pdf->download('reporte_ventas_semanal.pdf');
+    }
+
 }

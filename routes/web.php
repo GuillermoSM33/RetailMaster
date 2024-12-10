@@ -66,6 +66,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/ventas/verificar-stock', [VentaController::class, 'verificarStock'])->name('ventas.verificarStock');
 
     Route::post('/ventas', [VentaController::class, 'guardarVenta'])->name('ventas.guardar');
+
+    Route::get('/reporte-ventas-mensual', [VentaController::class, 'generarReporteMensual'])->name('ventas.reporteMensual');
+
+    Route::get('/reporte-ventas-semanal', [VentaController::class, 'generarReporteSemanal'])->name('ventas.reporteSemanal');
     
 });
 
