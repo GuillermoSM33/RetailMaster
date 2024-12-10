@@ -11,6 +11,7 @@ class Producto extends Model
 
     protected $table = 'productos';
     protected $primaryKey = 'id_producto';
+    public $timestamps = false;
 
     // Especifica los campos que son asignables en masa
     protected $fillable = [

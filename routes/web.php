@@ -35,9 +35,9 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->middleware('verified')->name('dashboard');
 
-    // Modulo de Inventario
+    // Módulo de Inventario
     Route::get('/inventario', [inventoryController::class, 'index'])->name('productos.index');
-    Route::post('/inventario', [inventoryController::class, 'store'])->name('productos.store');
+    Route::post('/productos', [inventoryController::class, 'store'])->middleware('permission:crear')->name('productos.store');
     Route::delete('/productos/{id_producto}', [inventoryController::class, 'destroy'])->middleware('permission:eliminar')->name('productos.destroy');
 
 
