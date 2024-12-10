@@ -206,3 +206,8 @@
     font-size: 14px;
     box-sizing: border-box;  /* Asegura que el padding no afecte al tamaño total */
 }
+
+.stock-bajo {
+  color: red;
+  font-weight: bold;
+}
