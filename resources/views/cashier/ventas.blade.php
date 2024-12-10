@@ -10,7 +10,8 @@
 <div class="custom-container">
         <h1>Ventas</h1>
         <div class="custom-search-bar">
-            <input type="text" placeholder="Código de producto o nombre de producto">
+            <input type="text" id="search" placeholder="Código de producto o nombre de producto">
+            <div id="search-results" class="search-results"></div>
             <button>Agregar producto</button>
             <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Generar Corte</button>
         </div>
@@ -81,4 +82,51 @@
             </tbody>
         </table>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+document.getElementById('search').addEventListener('input', function() {
+    const query = this.value;
+    const resultsContainer = document.getElementById('search-results');
+
+    if (query.length === 0) {
+        resultsContainer.innerHTML = ''; // Limpiar resultados si el input está vacío
+        return;
+    }
+
+    axios.get('{{ route('productos.buscar') }}', { params: { q: query } })
+        .then(response => {
+            const productos = response.data;
+            resultsContainer.innerHTML = '';
+
+            if (productos.length === 0) {
+                resultsContainer.innerHTML = '<p>No se encontraron productos.</p>';
+                return;
+            }
+
+            productos.forEach(producto => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.textContent = `${producto.descripcion}`;
+                
+                // Asignar un data-id al item para almacenar el ID
+                item.setAttribute('data-id', producto.id_producto);
+                
+                // Agregar el item a los resultados
+                resultsContainer.appendChild(item);
+                
+                // Manejar el doble clic para poner el ID en el input
+                item.addEventListener('dblclick', function() {
+                    document.getElementById('search').value = item.getAttribute('data-id');
+                    resultsContainer.innerHTML = ''; // Limpiar los resultados después de seleccionar
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error al buscar productos:', error);
+        });
+});
+
+
+</script>
 @endsection

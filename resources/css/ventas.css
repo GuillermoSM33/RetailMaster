@@ -166,3 +166,43 @@
     color: #000;
     margin-left: 10px;
   }  
+
+  .search-results {
+    border: 1px solid #ccc;
+    background: #fff;
+    max-height: 200px;  /* Puedes ajustar la altura según lo necesites */
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+    top: 100%;  /* Asegura que se muestre justo debajo del input */
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Sombra para destacar los resultados */
+    border-radius: 4px;
+}
+
+.result-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;  /* Ajusta el tamaño de fuente según tus necesidades */
+    transition: background 0.2s ease-in-out;  /* Transición suave al hacer hover */
+}
+
+.result-item:hover {
+    background: #f1f1f1;  /* Color de fondo al hacer hover */
+}
+
+.custom-search-bar {
+    position: relative;
+    width: 100%;
+}
+
+#search {
+    padding: 10px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;  /* Asegura que el padding no afecte al tamaño total */
+}
