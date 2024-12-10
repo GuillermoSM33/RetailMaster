@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\inventoryController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +38,9 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->middleware('verified')->name('dashboard');
 
+    Route::get('/inventario', [inventoryController::class, 'index']);
+    Route::post('/inventario', [inventoryController::class, 'store'])->name('productos.store');
+
     // Perfil de usuario
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
@@ -50,8 +55,9 @@ Route::middleware(['auth'])->group(function () {
         Route::match(['PUT', 'PATCH'], '/{user}', [UserController::class, 'update'])->middleware('permission:editar')->name('update'); // Acepta PUT y PATCH
         Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('permission:eliminar')->name('destroy');
     });
+
+    Route::get('/users/pdf', [UserController::class, 'generatePDF'])->name('users.pdf');
     
 });
 
-// Importa las rutas de autenticación
 require __DIR__.'/auth.php';
