@@ -45,7 +45,7 @@
 
         <div class="flex items-center justify-between mt-4">
             <!-- Botón Regresar -->
-            <a href="{{ route('admin.users') }}" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <a href="{{ route('usuarios.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 {{ __('Regresar') }}
             </a>
 
