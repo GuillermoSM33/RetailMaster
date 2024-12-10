@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Producto extends Model
+class Venta extends Model
 {
     use HasFactory;
 
-    protected $table = 'productos'; // Nombre de la tabla
-    protected $primaryKey = 'id_producto'; // Llave primaria
+    protected $table = 'ventas'; // Nombre de la tabla
+    protected $primaryKey = 'id_venta'; // Llave primaria
 
     public $timestamps = false; // Si no usas created_at/updated_at
 
     protected $fillable = [
-        'descripcion',
-        'precio_costo',
-        'precio_venta',
-        'stock',
+        'total',
+        'monto_recibido',
+        'cambio',
+        'metodo_pago',
+        'fecha_venta',
     ];
 
     /**
@@ -26,6 +27,6 @@ class Producto extends Model
      */
     public function detalleVentas()
     {
-        return $this->hasMany(DetalleVenta::class, 'id_producto', 'id_producto');
+        return $this->hasMany(DetalleVenta::class, 'id_venta', 'id_venta');
     }
 }

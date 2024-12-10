@@ -94,37 +94,97 @@
 </div>
 
 <script>
-    // Seleccionamos los elementos del DOM
-    const openModalBtn = document.getElementById('openModalBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const modal = document.getElementById('myModal');
+    document.addEventListener('DOMContentLoaded', () => {
+        // Seleccionamos los elementos del DOM
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modal = document.getElementById('myModal');
+        const generarTicketBtn = document.querySelector('.w-full.py-3'); // Botón para generar ticket
+        const montoRecibidoInput = document.querySelector('input[placeholder="DIGITE EL MONTO RECIBIDO"]');
+        const metodoPagoInputs = document.querySelectorAll('input[name="recibo"]');
 
-    // Función para abrir el modal
-    openModalBtn.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    });
+        // Verificar existencia de totalLabel
+        const totalLabel = document.querySelector('.total span');
+        if (!totalLabel) {
+            console.error('No se encontró el elemento totalLabel.');
+            return;
+        }
 
-    // Función para cerrar el modal
-    closeModalBtn.addEventListener('click', () => {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    });
+        let total = parseFloat(totalLabel.textContent.replace('Total: $', '').replace(' MX', '')) || 0;
 
-    // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
+        // Función para abrir el modal
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+
+        // Función para cerrar el modal
+        closeModalBtn.addEventListener('click', () => {
             modal.classList.remove('flex');
             modal.classList.add('hidden');
-        }
-    });
+        });
 
-    // Cerrar el modal al presionar la tecla Escape
-    window.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }
+        // Cerrar el modal al hacer clic fuera de él
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
+
+        // Cerrar el modal al presionar la tecla Escape
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
+
+        // Función para generar ticket y guardar venta
+        generarTicketBtn.addEventListener('click', () => {
+            const montoRecibido = parseFloat(montoRecibidoInput.value);
+
+            if (isNaN(montoRecibido) || montoRecibido < total) {
+                alert('Por favor, ingrese un monto válido que cubra el total.');
+                return;
+            }
+
+            const metodoPago = [...metodoPagoInputs].find(input => input.checked)?.id === 'impreso' ? 'Efectivo' : 'Tarjeta';
+
+            // Obtener productos de la tabla
+            const productos = [...document.querySelectorAll('table tbody tr')].map(row => {
+                const id = row.children[0]?.textContent || '';
+                const cantidad = row.querySelector('.cantidad')?.textContent || 0;
+
+                if (!id || !cantidad) {
+                    console.error('Fila incompleta en la tabla de productos.');
+                    return null;
+                }
+
+                return {
+                    id,
+                    cantidad: parseInt(cantidad),
+                };
+            }).filter(item => item !== null);
+
+            // Enviar datos al backend
+            axios.post('{{ route('ventas.guardar') }}', {
+                productos,
+                monto_recibido: montoRecibido,
+                metodo_pago: metodoPago,
+            }).then(response => {
+                // Abre el PDF generado en una nueva ventana
+                const pdfWindow = window.open();
+                pdfWindow.location.href = response.request.responseURL;
+                // Cerrar el modal y limpiar el formulario
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                montoRecibidoInput.value = '';
+            }).catch(error => {
+                console.error('Error al guardar la venta:', error);
+                alert('Hubo un error al guardar la venta. Intente nuevamente.');
+            });
+        });
     });
 </script>
 
@@ -193,76 +253,6 @@
             })
             .catch(error => console.error('Error al buscar productos:', error));
     });
-
-/* function agregarProductoATabla(id, descripcion, precio) {
-    const cantidad = 1; // Por defecto, siempre intentamos agregar 1
-
-    // Verificar stock antes de agregar
-    axios.post('{{ route('ventas.verificarStock') }}', {
-    producto_id: id,
-        cantidad: cantidad,
-    })
-    .then(response => {
-            if (response.data.success) {
-                // Si hay suficiente stock, agregar al carrito
-                const tabla = document.querySelector('table tbody');
-                const fila = document.createElement('tr');
-
-                fila.innerHTML = `
-                <td>${id}</td>
-                <td>${descripcion}</td>
-                <td class="cantidad">${cantidad}</td>
-                <td class="precio">$${precio.toFixed(2)}</td>
-                <td>
-                    <button class="bajar-producto">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
-                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    <button class="subir-producto">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#50fa7b" viewBox="0 0 24 24" class="size-6">
-                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    <button class="eliminar-producto">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
-                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </td>
-            `;
-
-                // Agregar fila a la tabla
-                tabla.appendChild(fila);
-
-                // Asociar eventos a los botones
-                fila.querySelector('.bajar-producto').addEventListener('click', () => {
-                    actualizarCantidad(fila, -1, precio);
-                });
-
-                fila.querySelector('.subir-producto').addEventListener('click', () => {
-                    actualizarCantidad(fila, 1, precio);
-                });
-
-                fila.querySelector('.eliminar-producto').addEventListener('click', () => {
-                    eliminarProducto(fila, precio);
-                });
-
-                // Actualizar el total
-                total += precio;
-                actualizarTotal();
-            } else {
-                // Mostrar alerta de stock insuficiente
-                alert(response.data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error al verificar stock:', error);
-            alert('!UPSS!, Parece que el stock del inventario es insuficiente.');
-        });
-} */
 
     function agregarProductoATabla(id, descripcion, precio) {
         const cantidad = 1; // Por defecto, siempre intentamos agregar 1

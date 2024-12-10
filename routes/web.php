@@ -64,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['GET', 'POST'], '/buscar', [ProductoController::class, 'buscar'])->name('productos.buscar');
 
     Route::post('/ventas/verificar-stock', [VentaController::class, 'verificarStock'])->name('ventas.verificarStock');
+
+    Route::post('/ventas', [VentaController::class, 'guardarVenta'])->name('ventas.guardar');
     
 });
 

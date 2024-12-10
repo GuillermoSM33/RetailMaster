@@ -15,13 +15,18 @@ return new class extends Migration
     {
         Schema::create('detalle_ventas', function (Blueprint $table) {
             $table->increments('id_detalle_venta');
-            $table->unsignedInteger('id_venta')->nullable(); 
-            $table->unsignedInteger('id_producto')->nullable(); 
-            $table->integer('cantidad'); 
-            $table->decimal('subtotal', 10, 2); 
+            $table->unsignedInteger('id_venta');
+            $table->unsignedInteger('id_producto');
+            $table->integer('cantidad');
+            $table->decimal('subtotal', 12, 4);
+        
+            // Claves foráneas
             $table->foreign('id_venta')->references('id_venta')->on('ventas')->onDelete('cascade');
             $table->foreign('id_producto')->references('id_producto')->on('productos')->onDelete('cascade');
-        });
+        
+            // Índice combinado
+            $table->index(['id_venta', 'id_producto']);
+        });        
     }
 
     /**

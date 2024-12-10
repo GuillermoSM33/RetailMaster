@@ -14,12 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('productos', function (Blueprint $table) {
-            $table->increments('id_producto'); 
+            $table->increments('id_producto');
             $table->string('descripcion', 255);
-            $table->decimal('precio_costo', 10, 2);
-            $table->decimal('precio_venta', 10, 2);
+            $table->decimal('precio_costo', 12, 4);
+            $table->decimal('precio_venta', 12, 4);
             $table->integer('stock');
-        });
+        });        
     }
 
     /**
