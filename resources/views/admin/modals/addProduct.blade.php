@@ -1,9 +1,3 @@
-@extends('components.modalComponent')
-
-@section('modal-id', 'add-product-modal')
-@section('modal-title', 'Crear nuevo producto')
-
-@section('modal-content')
 <form id="add-product-form" action="{{ route('productos.store') }}" method="POST">
     @csrf
     <div class="grid gap-4 mb-4">
@@ -39,7 +33,7 @@
 
     <!-- Botones del formulario -->
     <div class="flex justify-end p-4 border-t">
-        <button @click="$dispatch('close-modal', { id: 'add-product-modal' })" type="button" class="text-white inline-flex items-center bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
+        <button @click="openModal = false" class="text-white inline-flex items-center bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
             Cancelar
         </button>
         <button type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
@@ -47,4 +41,3 @@
         </button>
     </div>
 </form>
-@endsection
