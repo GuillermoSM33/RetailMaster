@@ -28,9 +28,11 @@
 
 <div class="custom-container" x-data="{ openModal: null }">
     <h1>Inventario</h1>
+    @if(auth()->user()->hasrole('Administrador'))
     <div class="custom-search-bar">
         <button @click="openModal = 'add-product'">Agregar Producto</button>
     </div>
+    @endif
 
     <!-- Modal Agregar Producto-->
     <div x-show="openModal === 'add-product'" @click.away="openModal = null" @keydown.escape.window="openModal = null"
@@ -72,7 +74,9 @@
                     <th>Precio costo</th>
                     <th>Precio venta</th>
                     <th>Stock</th>
+                    @if(auth()->user()->hasrole('Administrador'))
                     <th>Acciones</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -83,6 +87,7 @@
                         <td>{{ $producto->precio_costo }}</td>
                         <td>{{ $producto->precio_venta }}</td>
                         <td>{{ $producto->stock }}</td>
+                        @if(auth()->user()->hasrole('Administrador'))
                         <td class="actions">
                             <button @click="openModal = 'edit-product-{{ $producto->id_producto }}'">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="#FAE339" viewBox="0 0 24 24"
@@ -101,6 +106,7 @@
                                 </svg>
                             </button>
                         </td>
+                        @endif
                     </tr>
 
                     <!-- Modal Eliminar Producto -->
