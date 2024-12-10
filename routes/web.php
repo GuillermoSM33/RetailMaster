@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/ventas/verificar-stock', [VentaController::class, 'verificarStock'])->name('ventas.verificarStock');
 
     Route::post('/ventas', [VentaController::class, 'guardarVenta'])->name('ventas.guardar');
+    Route::get('/ventas/enviar-ticket/{ventaId}', [VentaController::class, 'enviarTicket'])->name('ventas.enviar-ticket');
     
 });
 

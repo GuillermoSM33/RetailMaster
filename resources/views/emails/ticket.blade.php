@@ -5,41 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket de Venta</title>
     <style>
-        /* Integrar Tailwind CSS para el correo electrónico */
-        @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #333;
+            color: white;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            text-align: right;
+            color: #2d572c;
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body>
 
-    <div class="max-w-7xl mx-auto p-6">
-        <h1 class="text-2xl font-semibold mb-4">Ticket de Venta</h1>
+<div class="container">
+    <h1>Ticket de Venta</h1>
 
-        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden mb-4">
-            <thead class="bg-gray-800 text-white">
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($detalleventas as $venta)
                 <tr>
-                    <th class="px-4 py-2 text-left">Producto</th>
-                    <th class="px-4 py-2 text-left">Cantidad</th>
-                    <th class="px-4 py-2 text-left">Precio</th>
-                    <th class="px-4 py-2 text-left">Total</th>
+                    <td>{{ $venta->producto->descripcion }}</td>
+                    <td>{{ $venta->cantidad }}</td>
+                    <td>${{ number_format($venta->precio_unitario, 2) }}</td>
+                    <td>${{ number_format($venta->precio_total, 2) }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($detalleventas as $venta)
-                    <tr>
-                        <td class="px-4 py-2">{{ $venta->producto }}</td>
-                        <td class="px-4 py-2">{{ $venta->cantidad }}</td>
-                        <td class="px-4 py-2">${{ number_format($venta->precio, 2) }}</td>
-                        <td class="px-4 py-2">${{ number_format($venta->total, 2) }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+            @endforeach
+        </tbody>
+    </table>
 
-        <p class="font-semibold text-lg">
-            <span class="mr-2">Total General:</span>
-            <span class="text-green-600">${{ number_format($detalleventas->sum('total'), 2) }}</span>
-        </p>
-    </div>
+    <p class="total">
+        Total General: ${{ number_format($detalleventas->sum('precio_total'), 2) }}
+    </p>
+</div>
 
 </body>
 </html>

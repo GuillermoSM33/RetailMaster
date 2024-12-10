@@ -86,7 +86,9 @@
                         <td>{{ $producto->descripcion }}</td>
                         <td>{{ $producto->precio_costo }}</td>
                         <td>{{ $producto->precio_venta }}</td>
-                        <td>{{ $producto->stock }}</td>
+                        <td class="{{ $producto->stock <= 10 ? 'stock-bajo' : '' }}">
+                            {{ $producto->stock }}
+                         </td>
                         @if(auth()->user()->hasrole('Administrador'))
                         <td class="actions">
                             <button @click="openModal = 'edit-product-{{ $producto->id_producto }}'">
