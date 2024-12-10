@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User; // Importar el modelo User
+use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role; // Usar el modelo Role de Spatie
-use Spatie\Permission\Models\Permission; // Usar el modelo Permission de Spatie
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -19,19 +19,28 @@ class UserController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
         $users = User::with('roles')->paginate(10);
-        return view('admin.users', compact('users'));
+        $roles = Role::all();
+
+        return view('admin.users', compact('users', 'roles'));
+    }
+
+    /**
+     * Return user data as JSON.
+     */
+    public function getUser(User $user)
+    {
+        return response()->json([
+            'user' => $user,
+            'roles' => $user->roles->pluck('name'),
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -41,18 +50,14 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required|array',
-        ]);
+        $validator = $this->validateUser($request);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -60,61 +65,67 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        $roles = Role::whereIn('name', $request->roles)->get();
-        $user->syncRoles($roles);
+        $user->syncRoles($request->roles);
 
-        return redirect()->route('users.index')->with('success', 'Usuario creado con éxito');
+        return redirect()->route('usuarios.index')->with('success', 'Usuario creado con éxito.');
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  User  $user
-     * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('users.edit', compact('user', 'roles'));
+        return view('admin.modals.editUser', compact('user', 'roles'));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  User  $user
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'roles' => 'required|array',
-        ]);
+        $validator = $this->validateUser($request, $user->id);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
         ]);
 
-        $roles = Role::whereIn('name', $request->roles)->get();
-        $user->syncRoles($roles);
+        $user->syncRoles($request->roles);
 
-        return redirect()->route('users.index')->with('success', 'Usuario actualizado con éxito');
+        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado con éxito.');
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  User  $user
-     * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)
     {
-        $user->syncRoles([]);
+        $user->syncRoles([]); // Eliminar roles antes de borrar
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'Usuario eliminado con éxito');
+        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado con éxito.');
+    }
+
+    /**
+     * Validate user input.
+     */
+    private function validateUser(Request $request, $userId = null)
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $userId,
+            'roles' => 'required|array|exists:roles,name',
+        ];
+
+        if ($request->isMethod('post')) { // Validación adicional para creación
+            $rules['password'] = 'required|string|min:8|confirmed';
+        }
+
+        return Validator::make($request->all(), $rules);
     }
 }
