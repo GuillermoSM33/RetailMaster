@@ -1,58 +1,23 @@
 <?php
-
-namespace App\Mail;
-
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 
 class TicketMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    public $venta;
+    public $pdf;
 
-    // Propiedad pública para almacenar los detalles de la venta
-    public $detalleventas;
-
-    /**
-     * Crear una nueva instancia de mensaje.
-     *
-     * @param $detalleventas
-     */
-    public function __construct($detalleventas)
+    public function __construct($venta, $pdf)
     {
-        $this->detalleventas = $detalleventas;
+        $this->venta = $venta;
+        $this->pdf = $pdf;
     }
 
-    /**
-     * Definir el asunto del correo.
-     */
-    public function envelope()
+    public function build()
     {
-        return new Envelope(
-            subject: 'Ticket de Venta'
-        );
-    }
-
-    /**
-     * Definir la vista y datos que se enviarán.
-     */
-    public function content()
-    {
-        return new Content(
-            view: 'emails.ticket',
-            with: [
-                'detalle_ventas' => $this->detalleventas,
-            ]
-        );
-    }
-
-    /**
-     * Adjuntar archivos si es necesario.
-     */
-    public function attachments()
-    {
-        return [];
+        return $this->subject('Ticket de Venta')
+                    ->view('emails.ticket')
+                    ->attachData($this->pdf, 'ticket.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
     }
 }

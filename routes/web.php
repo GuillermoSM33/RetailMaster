@@ -71,6 +71,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/reporte-ventas-semanal', [VentaController::class, 'generarReporteSemanal'])->name('ventas.reporteSemanal');
     
+    Route::post('/enviar-ticket/{ventaId}', [VentaController::class, 'enviarTicketPorCorreo']);
+
+    // Ruta para enviar el ticket por correo
+    Route::post('/ventas/enviar-correo', [VentaController::class, 'enviarCorreo'])->name('ventas.enviarCorreo');
+
+
 });
 
 require __DIR__.'/auth.php';

@@ -9,6 +9,8 @@ use App\Models\Producto;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Carbon\Carbon;
+use App\Mail\TicketMail;
+use Illuminate\Support\Facades\Mail;
 
 class VentaController extends Controller
 {
@@ -123,5 +125,32 @@ class VentaController extends Controller
         // Retornar el PDF como descarga
         return $pdf->download('reporte_ventas_semanal.pdf');
     }
+
+    public function enviarCorreo(Request $request)
+    {
+        \Log::debug('Datos recibidos:', $request->all());
+
+        // Verifica si el recibo está presente en la solicitud
+        if ($request->has('recibo') && $request->recibo == 'correo') {
+            // Si el recibo está marcado como 'correo', verifica si el email es válido
+            if ($request->has('email') && filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+                
+                // Aquí puedes enviar el correo, pasando los datos necesarios
+                Mail::to($request->email)->send(new TicketMail([$venta]));
+                
+                // Responde si el correo fue enviado correctamente
+                return response()->json(['message' => 'Correo enviado correctamente']);
+            } else {
+                // Si el email no es válido, responde con un error 400
+                return response()->json(['message' => 'Correo electrónico inválido'], 400);
+            }
+        } else {
+            // Si el recibo no está marcado o no es 'correo', no se envía el correo
+            return response()->json(['message' => 'No se seleccionó un recibo válido'], 400);
+        }
+    }
+    
+    
+    
 
 }

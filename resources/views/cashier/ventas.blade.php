@@ -4,6 +4,7 @@
 
 @section('estilos')
 @vite(['resources/css/ventas.css'])
+@vite('resources/js/app.js')
 @endsection
 
 @section('contenido')
@@ -72,33 +73,34 @@
             </div>
             <div class="p-4">
                 <div class="max-w-md mx-auto p-6 bg-white rounded-lg space-y-6">
-<!-- Monto Total -->
-<div class="text-lg font-semibold text-gray-700">
-    EL MONTO TOTAL ES DE: <span id="montoTotal" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
-</div>
+                    <!-- Monto Total -->
+                    <div class="text-lg font-semibold text-gray-700">
+                        EL MONTO TOTAL ES DE: <span id="montoTotal" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
+                    </div>
                     <!-- Monto Recibido Input -->
-                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="DIGITE EL MONTO RECIBIDO">
+                    <input type="text" id="montoRecibido" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="DIGITE EL MONTO RECIBIDO">
 
-<!-- Cambio -->
-<div class="text-lg font-semibold text-gray-700">
-    EL CAMBIO ES DE: <span id="cambio" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
-</div>
-                    <!-- Recibo Por -->
-                    <div class="text-gray-700">Recibo por:</div>
-                    <div class="flex items-center space-x-4">
-                        <label class="flex items-center space-x-2">
-                            <input type="radio" id="impreso" name="recibo" checked class="form-radio text-indigo-600">
-                            <span class="text-gray-700">Impreso</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="radio" id="correo" name="recibo" class="form-radio text-indigo-600">
-                            <span class="text-gray-700">Correo</span>
-                        </label>
+                    <!-- Cambio -->
+                    <div class="text-lg font-semibold text-gray-700">
+                        EL CAMBIO ES DE: <span id="cambio" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
                     </div>
 
-                    <!-- Botón -->
-                    <button class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        Imprimir
+                    <!-- Recibo por Correo -->
+                    <div class="text-gray-700">Recibo por:</div>
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" id="correo" name="recibo" checked class="form-radio text-indigo-600">
+                        <span class="text-gray-700">Correo</span>
+                    </label>
+
+                    <!-- Input de correo -->
+                    <div id="correoInput" class="mt-4">
+                        <label for="email" class="block text-gray-700">Correo Electrónico:</label>
+                        <input type="email" id="email" name="email" placeholder="Ingresa tu correo" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    </div>
+
+                    <!-- Botón para Enviar -->
+                    <button id="enviarButton" class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Enviar Ticket
                     </button>
                 </div>
             </div>
@@ -521,6 +523,28 @@
 
         actualizarTotal();
     });
+</script>
+<script>
+function enviarCorreo(valorRecibo) {
+    // Solo envía el correo si el recibo está marcado como 'correo'
+    if (valorRecibo === 'correo') {
+        var email = document.querySelector('input[name="email"]').value; // Asegúrate de obtener el email
+
+        axios.post('/ruta-al-controlador', {
+            recibo: valorRecibo,
+            email: email,  // Envia el email al backend
+        })
+        .then(function (response) {
+            console.log('Correo enviado correctamente', response.data.message);
+        })
+        .catch(function (error) {
+            console.error('Error al enviar el correo:', error.response.data.message);
+        });
+    } else {
+        console.log('Recibo no marcado para enviar correo.');
+    }
+}
+
 </script>
 
 
