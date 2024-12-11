@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reporte-ventas-mensual', [VentaController::class, 'generarReporteMensual'])->name('ventas.reporteMensual');
 
     Route::get('/reporte-ventas-semanal', [VentaController::class, 'generarReporteSemanal'])->name('ventas.reporteSemanal');
+    Route::post('/ventas/reporte-por-fecha', [VentaController::class, 'generarReportePorFecha'])->name('ventas.reporteFecha');
     
 });
 
