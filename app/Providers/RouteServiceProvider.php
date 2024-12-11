@@ -16,7 +16,7 @@ class RouteServiceProvider extends ServiceProvider
      * 
      * Esta constante ahora utiliza un método dinámico para determinar la ruta de redirección.
      */
-    public const HOME = '/dashboard';
+    public const HOME = '/';
 
     /**
      * Define tus vinculaciones de modelo, filtros de patrones y otra configuración de rutas.

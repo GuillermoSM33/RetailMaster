@@ -7,6 +7,23 @@
 @endsection
 
 @section('contenido')
+<!-- Mostrar el mensaje de error -->
+@if(session('error'))
+    <div id="error-alert" class="flex items-center p-4 my-6 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50"
+        role="alert">
+        <span class="font-medium">{{ session('error') }}</span>
+    </div>
+    <script>
+        // Esperar 3 segundos y luego ocultar el mensaje
+        setTimeout(function () {
+            let alert = document.getElementById('error-alert');
+            if (alert) {
+                alert.style.display = 'none';
+            }
+        }, 3000);
+    </script>
+@endif
+
 <div class="custom-container" x-data="{ openModal: null }">
     <h1>Ventas</h1>
 
@@ -15,19 +32,20 @@
         <input type="text" id="search" placeholder="Código de producto o nombre de producto">
         <div id="search-results" class="search-results"></div>
         <button id="add-product">Agregar producto</button>
-        <button type="button" onclick="descargarReporteMensual()">Reporte de ventas Mensual</button>
-        <button type="button" onclick="descargarReporteSemanal()">Reporte de ventas Semanal</button>
+        <button type="button" id="openModalReporteBtn">Generar reporte</button>
+        <!-- <button type="button" onclick="descargarReporteMensual()">Reporte de ventas Mensual</button>
+        <button type="button" onclick="descargarReporteSemanal()">Reporte de ventas Semanal</button> -->
     </div>
 
     <script>
-    function descargarReporteMensual() {
-        window.open('{{ route('ventas.reporteMensual') }}', '_blank');
-    }
+        function descargarReporteMensual() {
+            window.open('{{ route('ventas.reporteMensual') }}', '_blank');
+        }
 
-    function descargarReporteSemanal() {
-        window.open('{{ route('ventas.reporteSemanal') }}', '_blank');
-    }
-</script>
+        function descargarReporteSemanal() {
+            window.open('{{ route('ventas.reporteSemanal') }}', '_blank');
+        }
+    </script>
 
     <!-- Botones de pago -->
     <div class="custom-payment-buttons">
@@ -59,30 +77,37 @@
 <div id="myModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
     <div class="flex items-center justify-center min-h-screen px-4 text-center">
         <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
-        <div class="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-lg shadow-xl">
+        <div
+            class="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-lg shadow-xl">
             <!-- Contenido del Modal -->
             <div class="flex items-center justify-between p-4 border-b">
                 <h3 class="text-lg font-semibold text-gray-900">Pagar en Efectivo</h3>
-                <button id="closeModalBtn" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                <button id="closeModalBtn" type="button"
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                     </svg>
                     <span class="sr-only">Cerrar modal</span>
                 </button>
             </div>
             <div class="p-4">
                 <div class="max-w-md mx-auto p-6 bg-white rounded-lg space-y-6">
-<!-- Monto Total -->
-<div class="text-lg font-semibold text-gray-700">
-    EL MONTO TOTAL ES DE: <span id="montoTotal" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
-</div>
+                    <!-- Monto Total -->
+                    <div class="text-lg font-semibold text-gray-700">
+                        EL MONTO TOTAL ES DE: <span id="montoTotal" class="text-xl font-bold text-indigo-600">$0.00
+                            MXN</span>
+                    </div>
                     <!-- Monto Recibido Input -->
-                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="DIGITE EL MONTO RECIBIDO">
+                    <input type="text"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="DIGITE EL MONTO RECIBIDO">
 
-<!-- Cambio -->
-<div class="text-lg font-semibold text-gray-700">
-    EL CAMBIO ES DE: <span id="cambio" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
-</div>
+                    <!-- Cambio -->
+                    <div class="text-lg font-semibold text-gray-700">
+                        EL CAMBIO ES DE: <span id="cambio" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
+                    </div>
                     <!-- Recibo Por -->
                     <div class="text-gray-700">Recibo por:</div>
                     <div class="flex items-center space-x-4">
@@ -97,7 +122,8 @@
                     </div>
 
                     <!-- Botón -->
-                    <button class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button
+                        class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         Imprimir
                     </button>
                 </div>
@@ -105,6 +131,46 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para Reporte -->
+<div id="modalReporte" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="flex items-center justify-center min-h-screen px-4 text-center">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+        <div
+            class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-lg shadow-xl">
+            <!-- Contenido del Modal -->
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Generar Reporte por Fecha</h3>
+                <button id="closeModalReporteBtn" type="button"
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Cerrar modal</span>
+                </button>
+            </div>
+            <div class="p-4">
+                <form action="{{ route('ventas.reporteFecha') }}" method="POST">
+                    @csrf
+                    <label for="fecha" class="block text-sm font-medium text-gray-700">Selecciona una Fecha</label>
+                    <input type="date" id="fecha" name="fecha"
+                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        required>
+
+                    <div class="mt-6 flex justify-end space-x-4">
+                        <button type="button" id="closeModalReporteBtn2"
+                            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancelar</button>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Generar
+                            PDF</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Tabla de ventas -->
 <div class="tabla">
@@ -392,8 +458,8 @@
 
 
     window.actualizarTotal = function () {
-    document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
-};
+        document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
+    };
 
 </script>
 
@@ -490,36 +556,54 @@
                 monto_recibido: montoRecibido,
                 metodo_pago: metodoPago,
             }, { responseType: 'blob' })
-            .then(response => {
-                const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', 'ticket_venta.pdf');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'ticket_venta.pdf');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
 
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-                montoRecibidoInput.value = '';
+                    modal.classList.remove('flex');
+                    modal.classList.add('hidden');
+                    montoRecibidoInput.value = '';
 
-                total = 0;
-                actualizarTotal();
+                    total = 0;
+                    actualizarTotal();
 
-                const tableBody = document.querySelector('table tbody');
-                if (tableBody) tableBody.innerHTML = '';
+                    const tableBody = document.querySelector('table tbody');
+                    if (tableBody) tableBody.innerHTML = '';
 
-                setTimeout(() => {
-                    window.location.reload();
-                }, 200);
-            })
-            .catch(error => {
-                console.error('Error al guardar la venta:', error);
-                alert('Hubo un error al guardar la venta. Intente nuevamente.');
-            });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 200);
+                })
+                .catch(error => {
+                    console.error('Error al guardar la venta:', error);
+                    alert('Hubo un error al guardar la venta. Intente nuevamente.');
+                });
         });
 
         actualizarTotal();
+    });
+
+    // Modal Generar Reporte
+    const modalReporte = document.getElementById('modalReporte');
+    const openModalReporteBtn = document.getElementById('openModalReporteBtn'); // Botón que abre el modal
+    const closeModalReporteBtns = [
+        document.getElementById('closeModalReporteBtn'),
+        document.getElementById('closeModalReporteBtn2'),
+    ];
+
+    openModalReporteBtn?.addEventListener('click', () => {
+        modalReporte.classList.remove('hidden');
+    });
+
+    closeModalReporteBtns.forEach(btn => {
+        btn?.addEventListener('click', () => {
+            modalReporte.classList.add('hidden');
+        });
     });
 </script>
 

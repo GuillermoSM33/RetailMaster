@@ -32,10 +32,6 @@ Route::middleware(['auth'])->group(function () {
         return view('cashier/ventas');
     })->name('ventas');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware('verified')->name('dashboard');
-
     // Módulo de Inventario
     Route::get('/inventario', [inventoryController::class, 'index'])->name('productos.index');
     Route::post('/productos', [inventoryController::class, 'store'])->middleware('permission:crear')->name('productos.store');
@@ -70,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reporte-ventas-mensual', [VentaController::class, 'generarReporteMensual'])->name('ventas.reporteMensual');
 
     Route::get('/reporte-ventas-semanal', [VentaController::class, 'generarReporteSemanal'])->name('ventas.reporteSemanal');
+    Route::post('/ventas/reporte-por-fecha', [VentaController::class, 'generarReportePorFecha'])->name('ventas.reporteFecha');
     
 });
 
