@@ -128,7 +128,6 @@
     });
 </script>
 
-
 <!-- Tabla de ventas -->
 <div class="tabla">
     <div class="total">
