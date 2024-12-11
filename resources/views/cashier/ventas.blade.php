@@ -15,8 +15,19 @@
         <input type="text" id="search" placeholder="Código de producto o nombre de producto">
         <div id="search-results" class="search-results"></div>
         <button id="add-product">Agregar producto</button>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Generar Corte</button>
+        <button type="button" onclick="descargarReporteMensual()">Reporte de ventas Mensual</button>
+        <button type="button" onclick="descargarReporteSemanal()">Reporte de ventas Semanal</button>
     </div>
+
+    <script>
+    function descargarReporteMensual() {
+        window.open('{{ route('ventas.reporteMensual') }}', '_blank');
+    }
+
+    function descargarReporteSemanal() {
+        window.open('{{ route('ventas.reporteSemanal') }}', '_blank');
+    }
+</script>
 
     <!-- Botones de pago -->
     <div class="custom-payment-buttons">
@@ -61,15 +72,17 @@
             </div>
             <div class="p-4">
                 <div class="max-w-md mx-auto p-6 bg-white rounded-lg space-y-6">
-                    <!-- Monto Total -->
-                    <div class="text-lg font-semibold text-gray-700">EL MONTO TOTAL ES DE: <span class="text-xl font-bold text-indigo-600">$0.00 MXN</span></div>
-
+<!-- Monto Total -->
+<div class="text-lg font-semibold text-gray-700">
+    EL MONTO TOTAL ES DE: <span id="montoTotal" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
+</div>
                     <!-- Monto Recibido Input -->
                     <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="DIGITE EL MONTO RECIBIDO">
 
-                    <!-- Cambio -->
-                    <div class="text-lg font-semibold text-gray-700">EL CAMBIO ES DE: <span class="text-xl font-bold text-indigo-600">$0.00 MXN</span></div>
-
+<!-- Cambio -->
+<div class="text-lg font-semibold text-gray-700">
+    EL CAMBIO ES DE: <span id="cambio" class="text-xl font-bold text-indigo-600">$0.00 MXN</span>
+</div>
                     <!-- Recibo Por -->
                     <div class="text-gray-700">Recibo por:</div>
                     <div class="flex items-center space-x-4">
@@ -92,41 +105,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    // Seleccionamos los elementos del DOM
-    const openModalBtn = document.getElementById('openModalBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const modal = document.getElementById('myModal');
-
-    // Función para abrir el modal
-    openModalBtn.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    });
-
-    // Función para cerrar el modal
-    closeModalBtn.addEventListener('click', () => {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    });
-
-    // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }
-    });
-
-    // Cerrar el modal al presionar la tecla Escape
-    window.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }
-    });
-</script>
 
 <!-- Tabla de ventas -->
 <div class="tabla">
@@ -192,76 +170,6 @@
             })
             .catch(error => console.error('Error al buscar productos:', error));
     });
-
-/* function agregarProductoATabla(id, descripcion, precio) {
-    const cantidad = 1; // Por defecto, siempre intentamos agregar 1
-
-    // Verificar stock antes de agregar
-    axios.post('{{ route('ventas.verificarStock') }}', {
-    producto_id: id,
-        cantidad: cantidad,
-    })
-    .then(response => {
-            if (response.data.success) {
-                // Si hay suficiente stock, agregar al carrito
-                const tabla = document.querySelector('table tbody');
-                const fila = document.createElement('tr');
-
-                fila.innerHTML = `
-                <td>${id}</td>
-                <td>${descripcion}</td>
-                <td class="cantidad">${cantidad}</td>
-                <td class="precio">$${precio.toFixed(2)}</td>
-                <td>
-                    <button class="bajar-producto">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
-                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    <button class="subir-producto">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#50fa7b" viewBox="0 0 24 24" class="size-6">
-                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    <button class="eliminar-producto">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ff5555" viewBox="0 0 24 24" class="size-6">
-                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </td>
-            `;
-
-                // Agregar fila a la tabla
-                tabla.appendChild(fila);
-
-                // Asociar eventos a los botones
-                fila.querySelector('.bajar-producto').addEventListener('click', () => {
-                    actualizarCantidad(fila, -1, precio);
-                });
-
-                fila.querySelector('.subir-producto').addEventListener('click', () => {
-                    actualizarCantidad(fila, 1, precio);
-                });
-
-                fila.querySelector('.eliminar-producto').addEventListener('click', () => {
-                    eliminarProducto(fila, precio);
-                });
-
-                // Actualizar el total
-                total += precio;
-                actualizarTotal();
-            } else {
-                // Mostrar alerta de stock insuficiente
-                alert(response.data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error al verificar stock:', error);
-            alert('!UPSS!, Parece que el stock del inventario es insuficiente.');
-        });
-} */
 
     function agregarProductoATabla(id, descripcion, precio) {
         const cantidad = 1; // Por defecto, siempre intentamos agregar 1
@@ -483,8 +391,138 @@
     }
 
 
-    function actualizarTotal() {
-        document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
-    }
+    window.actualizarTotal = function () {
+    document.querySelector('.total span').textContent = `Total: $${total.toFixed(2)} MX`;
+};
+
 </script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modal = document.getElementById('myModal');
+        const montoTotalLabel = document.getElementById('montoTotal');
+        const montoRecibidoInput = document.querySelector('input[placeholder="DIGITE EL MONTO RECIBIDO"]');
+        const cambioLabel = document.getElementById('cambio');
+        const generarTicketBtn = document.querySelector('.w-full.py-3');
+        const metodoPagoInputs = document.querySelectorAll('input[name="recibo"]');
+        const totalLabel = document.querySelector('.total span');
+
+        if (!totalLabel) return;
+
+        let total = parseFloat(totalLabel.textContent.replace('Total: $', '').replace(' MX', '')) || 0;
+
+        window.actualizarTotal = function () {
+            total = [...document.querySelectorAll('table tbody tr')].reduce((acc, row) => {
+                const cantidad = parseInt(row.querySelector('.cantidad').textContent) || 0;
+                const precio = parseFloat(row.querySelector('.precio').textContent.replace('$', '')) || 0;
+                return acc + (cantidad * precio);
+            }, 0);
+
+            if (totalLabel) {
+                totalLabel.textContent = `Total: $${total.toFixed(2)} MX`;
+            }
+
+            if (montoTotalLabel) {
+                montoTotalLabel.textContent = `$${total.toFixed(2)} MXN`;
+            }
+        };
+
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            montoTotalLabel.textContent = `$${total.toFixed(2)} MXN`;
+            cambioLabel.textContent = `$0.00 MXN`;
+            montoRecibidoInput.value = '';
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        });
+
+        montoRecibidoInput.addEventListener('input', () => {
+            const montoRecibido = parseFloat(montoRecibidoInput.value) || 0;
+            const cambio = montoRecibido - total;
+            cambioLabel.textContent = cambio >= 0 ? `$${cambio.toFixed(2)} MXN` : `$0.00 MXN`;
+        });
+
+        generarTicketBtn.addEventListener('click', () => {
+            const montoRecibido = parseFloat(montoRecibidoInput.value);
+
+            if (isNaN(montoRecibido) || montoRecibido < total) {
+                alert('Por favor, ingrese un monto válido que cubra el total.');
+                return;
+            }
+
+            const metodoPago = [...metodoPagoInputs].find(input => input.checked)?.id === 'impreso' ? 'Efectivo' : 'Tarjeta';
+
+            const productos = [...document.querySelectorAll('table tbody tr')].map(row => {
+                const id = row.children[0]?.textContent || '';
+                const cantidad = row.querySelector('.cantidad')?.textContent || 0;
+
+                if (!id || !cantidad) return null;
+
+                return {
+                    id,
+                    cantidad: parseInt(cantidad),
+                };
+            }).filter(item => item !== null);
+
+            axios.post('{{ route('ventas.guardar') }}', {
+                productos,
+                monto_recibido: montoRecibido,
+                metodo_pago: metodoPago,
+            }, { responseType: 'blob' })
+            .then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'ticket_venta.pdf');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                montoRecibidoInput.value = '';
+
+                total = 0;
+                actualizarTotal();
+
+                const tableBody = document.querySelector('table tbody');
+                if (tableBody) tableBody.innerHTML = '';
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 200);
+            })
+            .catch(error => {
+                console.error('Error al guardar la venta:', error);
+                alert('Hubo un error al guardar la venta. Intente nuevamente.');
+            });
+        });
+
+        actualizarTotal();
+    });
+</script>
+
+
+
 @endsection

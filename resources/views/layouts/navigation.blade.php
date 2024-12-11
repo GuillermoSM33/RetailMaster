@@ -21,7 +21,7 @@
                 Inventario
             </x-nav-link>
             <x-nav-link :href="route('users.pdf')" :active="request()->routeIs('users.pdf')">
-                Reporte
+                UsuariosPDF
             </x-nav-link>
         
 
@@ -74,7 +74,7 @@
                 Inventario
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('users.pdf')" :active="request()->routeIs('users.pdf')">
-                Reporte
+                UsuariosPDF
             </x-responsive-nav-link>
         </div>
 

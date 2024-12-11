@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('productos', function (Blueprint $table) {
-            $table->increments('id_producto');
-            $table->string('descripcion', 255);
-            $table->decimal('precio_costo', 12, 4);
-            $table->decimal('precio_venta', 12, 4);
-            $table->integer('stock');
-        });        
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->timestamps(); // Agrega created_at y updated_at
+        });
     }
 
     /**
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('productos');
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->dropTimestamps(); // Elimina created_at y updated_at
+        });
     }
 };

@@ -9,20 +9,23 @@ class Producto extends Model
 {
     use HasFactory;
 
-    protected $table = 'productos';
-    protected $primaryKey = 'id_producto';
-    public $timestamps = false;
+    protected $table = 'productos'; // Nombre de la tabla
+    protected $primaryKey = 'id_producto'; // Llave primaria
 
-    // Especifica los campos que son asignables en masa
+    public $timestamps = false; // Si no usas created_at/updated_at
+
     protected $fillable = [
-        'id_producto',
         'descripcion',
         'precio_costo',
         'precio_venta',
-        'stock'      
+        'stock',
     ];
 
-    public $incrementing = true;
-
-    protected $keyType = 'int';
+    /**
+     * Relación con DetalleVenta
+     */
+    public function detalleVentas()
+    {
+        return $this->hasMany(DetalleVenta::class, 'id_producto', 'id_producto');
+    }
 }

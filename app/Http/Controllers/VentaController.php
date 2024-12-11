@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Producto; // Asegúrate de que esta línea esté presente
+use App\Models\Venta;
+use App\Models\DetalleVenta;
+use App\Models\Producto; 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Carbon\Carbon;
 
 class VentaController extends Controller
 {
@@ -42,4 +47,81 @@ class VentaController extends Controller
             ], 500);
         }
     }
+    
+    public function guardarVenta(Request $request)
+    {
+        // Validar los datos recibidos
+        $request->validate([
+            'productos' => 'required|array',
+            'productos.*.id' => 'required|exists:productos,id_producto',
+            'productos.*.cantidad' => 'required|integer|min:1',
+            'monto_recibido' => 'required|numeric|min:0',
+            'metodo_pago' => 'required|in:Efectivo,Tarjeta',
+        ]);
+    
+        // Calcular el total
+        $total = collect($request->productos)->reduce(function ($carry, $producto) {
+            $precio = Producto::find($producto['id'])->precio_venta;
+            return $carry + ($precio * $producto['cantidad']);
+        }, 0);
+    
+        // Crear la venta
+        $venta = Venta::create([
+            'total' => $total,
+            'monto_recibido' => $request->monto_recibido,
+            'cambio' => $request->monto_recibido - $total,
+            'metodo_pago' => $request->metodo_pago,
+        ]);
+    
+        // Guardar el detalle de la venta
+        foreach ($request->productos as $producto) {
+            DetalleVenta::create([
+                'id_venta' => $venta->id_venta,
+                'id_producto' => $producto['id'],
+                'cantidad' => $producto['cantidad'],
+                'subtotal' => Producto::find($producto['id'])->precio_venta * $producto['cantidad'],
+            ]);
+    
+            // Reducir el stock del producto
+            $prod = Producto::find($producto['id']);
+            $prod->stock -= $producto['cantidad'];
+            $prod->save();
+        }
+    
+        // Generar el PDF del ticket
+        $pdf = \PDF::loadView('pdf.venta', compact('venta'));
+    
+        // Retornar el PDF
+        return $pdf->download("venta_{$venta->id_venta}.pdf");
+    }
+    
+    public function generarReporteMensual()
+    {
+        // Obtener las ventas del mes actual
+        $ventas = Venta::whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->with('detalleVentas.producto')
+            ->get();
+
+        // Generar el PDF
+        $pdf = \PDF::loadView('pdf.reporte_ventas', compact('ventas'));
+
+        // Retornar el PDF como descarga
+        return $pdf->download('reporte_ventas_mensual.pdf');
+    }
+
+    public function generarReporteSemanal()
+    {
+        // Obtener las ventas de los últimos 7 días
+        $ventas = Venta::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->with('detalleVentas.producto')
+            ->get();
+
+        // Generar el PDF
+        $pdf = \PDF::loadView('pdf.reporte_ventas', compact('ventas'));
+
+        // Retornar el PDF como descarga
+        return $pdf->download('reporte_ventas_semanal.pdf');
+    }
+
 }
