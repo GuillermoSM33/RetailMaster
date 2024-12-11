@@ -32,10 +32,6 @@ Route::middleware(['auth'])->group(function () {
         return view('cashier/ventas');
     })->name('ventas');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware('verified')->name('dashboard');
-
     // Módulo de Inventario
     Route::get('/inventario', [inventoryController::class, 'index'])->name('productos.index');
     Route::post('/productos', [inventoryController::class, 'store'])->middleware('permission:crear')->name('productos.store');
